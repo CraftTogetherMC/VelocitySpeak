@@ -1,3 +1,4 @@
+prefix: "&a[&6BukkitSpeak&a]&f "
 main:
   TeamSpeakIp: 1.2.3.4
   TeamSpeakPort: 9987

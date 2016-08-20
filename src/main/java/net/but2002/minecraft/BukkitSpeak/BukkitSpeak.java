@@ -19,6 +19,7 @@ import net.but2002.minecraft.BukkitSpeak.TeamspeakCommands.TeamspeakCommandExecu
 import net.but2002.minecraft.BukkitSpeak.teamspeakEvent.TeamspeakListener;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -133,7 +134,7 @@ public class BukkitSpeak extends JavaPlugin {
 	}
 
 	public String toString() {
-		return "\u00A7a[\u00A76" + this.getDescription().getName() + "\u00A7a]\u00A7f ";
+		return ChatColor.translateAlternateColorCodes('&', getConfig().getString("prefix", "&a[&6" + this.getDescription().getName() + "&a]&f "));
 	}
 
 	public static String getFullName() {
