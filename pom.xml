@@ -2,13 +2,13 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>me.firedroide.plugins</groupId>
-	<artifactId>BukkitSpeak</artifactId>
+	<groupId>de.redstoneowlrd</groupId>
+	<artifactId>bungeespeak</artifactId>
 	<version>0.70-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>BukkitSpeak</name>
-	<url>http://dev.bukkit.org/server-mods/bukkitspeak/</url>
+	<name>BungeeSpeak</name>
+	<url>https://github.com/RedstoneWorld/BungeeSpeak</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,8 +16,8 @@
 
 	<repositories>
 		<repository>
-			<id>spigot-repo</id>
-			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+			<id>bungee-repo</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</repository>
 		<repository>
 			<id>stutz-repo</id>
@@ -33,24 +33,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>1.9-R0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.massivecraft</groupId>
-			<artifactId>Factions</artifactId>
-			<version>1.6.9.5</version>
-		</dependency>
-		<dependency>
-			<groupId>com.dthielke</groupId>
-			<artifactId>herochat</artifactId>
-			<version>5.6.7</version>
-		</dependency>
-		<dependency>
-			<groupId>com.gmail.nossr50.mcMMO</groupId>
-			<artifactId>mcMMO</artifactId>
-			<version>1.4.07</version>
+			<groupId>net.md-5</groupId>
+			<artifactId>bungeecord-api</artifactId>
+			<version>1.9-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

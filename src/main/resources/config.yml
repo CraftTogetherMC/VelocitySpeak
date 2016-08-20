@@ -1,4 +1,4 @@
-prefix: "&a[&6BukkitSpeak&a]&f "
+prefix: "&a[&6BungeeSpeak&a]&f "
 main:
   TeamSpeakIp: 1.2.3.4
   TeamSpeakPort: 9987
@@ -32,7 +32,7 @@ teamspeak:
   LogChatInConsole: true
   
   # The priority of the chat listener.
-  # By default, BukkitSpeak ignores all cancelled events (MONITOR).
+  # By default, BungeeSpeak ignores all cancelled events (MONITOR).
   # You can change this value to allow some or all (LOWEST) cancelled events to still be checked.
   # Read more about chat priorities here: http://wiki.bukkit.org/Event_API_Reference#Event_Priorities
   ChatListenerPriority: MONITOR

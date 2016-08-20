@@ -38,7 +38,7 @@ MinecraftCommand:
       ToMinecraftUser: '&e%command% &a- %description%'
     AdminCommands:
       Command: '/ts admin &aor &e/tsa'
-      Description: 'BukkitSpeak admin commands.'
+      Description: 'BungeeSpeak admin commands.'
       Header: '&2Admin Commands Help'
       ToMinecraftUser: '&e%command% &2- %description%'
   List:
@@ -48,7 +48,7 @@ MinecraftCommand:
     Channel:
       ToMinecraftUser: '&aCurrently in the channel (&e%count%&a): &e%list%'
   Mute:
-    Description: 'Mutes / unmutes BukkitSpeak for you.'
+    Description: 'Mutes / unmutes BungeeSpeak for you.'
     Enable:
       ToMinecraftUser: '&aYou are now muted.'
     Disable:
@@ -101,11 +101,11 @@ MinecraftCommand:
       ClientNotInChannel:
         ToMinecraftUser: '&4The client &r&e%target%&r&4 is not in the channel!'
   Set:
-    Description: 'Change BukkitSpeak''s config.'
+    Description: 'Change BungeeSpeak''s config.'
     ChannelChange:
       ToMinecraftServer: '&aYou are now talking in the TeamSpeak channel &6%channel%&a.'
   Status:
-    Description: 'Shows some info about BukkitSpeak.'
+    Description: 'Shows some info about BungeeSpeak.'
   Reload:
     Description: 'Reloads the config and the query.'
   KickBanDefaultReason: '-'

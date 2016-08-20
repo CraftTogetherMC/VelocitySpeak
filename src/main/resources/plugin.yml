@@ -1,25 +1,20 @@
-name: BukkitSpeak
+name: BungeeSpeak
 version: '${project.version}-b${BUILD_NUMBER}'
 description: 'This plugin will display Teamspeak 3 server joins, quits and messages in Minecraft.'
-main: net.but2002.minecraft.BukkitSpeak.BukkitSpeak
-load: POSTWORLD
+main: de.redstoneworld.bungeespeak.BungeeSpeak
 author: 'Firedroide'
-authors: [but2002, greycap, deathmarine]
-website: 'http://dev.bukkit.org/server-mods/bukkitspeak/'
-database: false
-softdepend:
-  - Factions
-  - Herochat
+authors: [but2002, greycap, deathmarine, Phoenix616]
+website: 'https://github.com/RedstoneWorld/BungeeSpeak'
 commands:
   ts:
-    description: BukkitSpeak commands
+    description: BungeeSpeak commands
     usage: Type /ts for help.
   tsa:
-    description: BukkitSpeak admin commands
+    description: BungeeSpeak admin commands
     usage: Type /tsa for help.
 permissions:
   bukkitspeak.*:
-    description: Gives access to all BukkitSpeak commands and messages.
+    description: Gives access to all BungeeSpeak commands and messages.
     default: op
     children:
       bukkitspeak.commands.*: true
@@ -44,7 +39,7 @@ permissions:
       bukkitspeak.commands.info: true
       bukkitspeak.messages.*: true
   bukkitspeak.commands.*:
-    description: Gives access to all BukkitSpeak commands.
+    description: Gives access to all BungeeSpeak commands.
     children:
       bukkitspeak.commands.user: true
       bukkitspeak.commands.admin: true
@@ -70,7 +65,7 @@ permissions:
       bukkitspeak.commands.status: true
       bukkitspeak.commands.reload: true
   bukkitspeak.commands.help:
-    description: Allows you to show BukkitSpeak's help menu.
+    description: Allows you to show BungeeSpeak's help menu.
     default: true
   bukkitspeak.commands.list:
     description: Allows you to use /ts list.
@@ -115,13 +110,13 @@ permissions:
   bukkitspeak.messages.leave:
     description: Displays a message when somebody left TeamSpeak.
   bukkitspeak.messages.channelenter:
-    description: Displays a message when somebody entered the channel BukkitSpeak is listening to.
+    description: Displays a message when somebody entered the channel BungeeSpeak is listening to.
   bukkitspeak.messages.channelleave:
-    description: Displays a message when somebody left the channel BukkitSpeak is listening to.
+    description: Displays a message when somebody left the channel BungeeSpeak is listening to.
   bukkitspeak.messages.broadcast:
     description: Shows you messages which were broadcasted on TeamSpeak.
   bukkitspeak.messages.chat:
-    description: Shows you chat messages in the channel BukkitSpeak is listening to.
+    description: Shows you chat messages in the channel BungeeSpeak is listening to.
   bukkitspeak.messages.pm:
     description: Shows you a message if somebody replies to your private message.
   bukkitspeak.sendteamspeak.*:
