@@ -1,5 +1,7 @@
 package de.redstoneworld.bungeespeak.util;
 
+import net.md_5.bungee.api.ChatColor;
+
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -18,7 +20,7 @@ public final class MessageUtil {
 
 		String s = input;
 		if (color) {
-			s = s.replaceAll("(&|$)([a-fk-orA-FK-OR0-9])", "\u00A7$2");
+			s = s.replaceAll("(&|$)([a-fk-orA-FK-OR0-9])", ChatColor.COLOR_CHAR + "$2");
 			s = s.replaceAll("\\[", "\\\\[");
 
 			StringBuilder out = new StringBuilder();
@@ -56,7 +58,7 @@ public final class MessageUtil {
 	}
 
 	public static String getFormatString(String input) {
-		String s = input.replaceAll("(&|$)([a-fk-orA-FK-OR0-9])", "\u00A7$2");
+		String s = input.replaceAll("(&|$)([a-fk-orA-FK-OR0-9])", ChatColor.COLOR_CHAR + "$2");
 		Deque<FormatString> deque = new LinkedList<FormatString>();
 		Matcher m = Pattern.compile("\u00A7[a-fk-orA-FK-OR0-9]").matcher(s);
 
@@ -81,7 +83,7 @@ public final class MessageUtil {
 		if (input != null) {
 			String s = input;
 			if (color) {
-				s = s.replaceAll("(&|$)([a-fk-orA-FK-OR0-9])", "\u00A7$2");
+				s = s.replaceAll("(&|$)([a-fk-orA-FK-OR0-9])", ChatColor.COLOR_CHAR + "$2");
 			} else {
 				s = s.replaceAll("((&|$|\u00A7)([a-fk-orA-FK-OR0-9]))", "");
 			}

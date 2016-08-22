@@ -6,7 +6,7 @@ import de.redstoneworld.bungeespeak.BungeeSpeak;
 
 import org.bukkit.ChatColor;
 import net.md_5.bungee.api.CommandSender;
-import org.bukkit.entity.Player;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class CommandReload extends BungeeSpeakCommand {
 
@@ -18,11 +18,11 @@ public class CommandReload extends BungeeSpeakCommand {
 	public void execute(CommandSender sender, String[] args) {
 		String t = BungeeSpeak.getInstance().toString();
 		if (BungeeSpeak.getInstance().reload()) {
-			if (sender instanceof Player) {
+			if (sender instanceof ProxiedPlayer) {
 				sender.sendMessage(t + ChatColor.GREEN + "reloaded.");
 			}
 		} else {
-			if (sender instanceof Player) {
+			if (sender instanceof ProxiedPlayer) {
 				sender.sendMessage(t + ChatColor.RED + "was unable to reload, an error happened.");
 			}
 		}

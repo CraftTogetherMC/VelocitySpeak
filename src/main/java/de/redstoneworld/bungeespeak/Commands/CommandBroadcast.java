@@ -11,7 +11,7 @@ import de.redstoneworld.bungeespeak.util.MessageUtil;
 import de.redstoneworld.bungeespeak.util.Replacer;
 import de.redstoneworld.bungeespeak.AsyncQueryUtils.QuerySender;
 
-import org.bukkit.Bukkit;
+
 import net.md_5.bungee.api.CommandSender;
 
 import de.stefan1200.jts3serverquery.JTS3ServerQuery;
@@ -53,7 +53,7 @@ public class CommandBroadcast extends BungeeSpeakCommand {
 		if (tsMsg == null || tsMsg.isEmpty()) return;
 		QuerySender qs = new QuerySender(BungeeSpeak.getQuery().getCurrentQueryClientServerID(),
 				JTS3ServerQuery.TEXTMESSAGE_TARGET_VIRTUALSERVER, tsMsg);
-		Bukkit.getScheduler().runTaskAsynchronously(BungeeSpeak.getInstance(), qs);
+		BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qs);
 		broadcastMessage(mcMsg, sender);
 	}
 

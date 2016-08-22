@@ -40,7 +40,7 @@ public class TeamspeakCommandEvent extends TeamspeakEvent {
 		}
 		if (sg.isBlocked()) return;
 
-		TeamspeakCommandSender tscs = new TeamspeakCommandSender(getUser(), sg.isOp(), sg.getPermissions());
+		TeamspeakCommandSender tscs = new TeamspeakCommandSender(getUser(), sg.getPermissions());
 
 		// Check for internal commands.
 		if (BungeeSpeak.getTeamspeakCommandExecutor().execute(tscs, commandName, args)) {
@@ -52,31 +52,24 @@ public class TeamspeakCommandEvent extends TeamspeakEvent {
 			return;
 		}
 
-		// Not an internal command, execute as a Bukkit command.
-		PluginCommand pc = Bukkit.getPluginCommand(commandName);
-
 		// Vanilla and Bukkit commands don't need to be on the whitelist
-		if (pc != null && !(sg.getPluginWhitelist().contains(pc.getPlugin().getName()))) {
+		if (!sg.getCommandWhitelist().contains("*") && !(sg.getCommandWhitelist().contains(commandName))) {
 			String m = Messages.TS_COMMAND_NOT_WHITELISTED.get();
 			if (m.isEmpty()) return;
-			getUser().put("command_name", pc.getName());
-			getUser().put("command_description", pc.getDescription());
-			getUser().put("command_plugin", pc.getPlugin().getName());
+			getUser().put("command_name", commandName);
 
 			Replacer r = new Replacer().addClient(getUser());
 			tscs.sendMessage(r.replace(m));
 			if (Configuration.TS_COMMANDS_LOGGING.getBoolean()) {
 				BungeeSpeak.log().info("TS client \"" + getClientName() + "\" tried executing command \"" + cmd + "\","
-						+ " but the plugin \"" + pc.getPlugin().getName() + "\" was not whitelisted.");
+						+ " but it was not whitelisted.");
 			}
 			return;
 		}
-		if (sg.getCommandBlacklist().contains(commandName)) {
+		if (BungeeSpeak.getInstance().getProxy().getDisabledCommands().contains(commandName) || sg.getCommandBlacklist().contains(commandName)) {
 			String m = Messages.TS_COMMAND_BLACKLISTED.get();
 			if (m.isEmpty()) return;
-			getUser().put("command_name", pc.getName());
-			getUser().put("command_description", pc.getDescription());
-			getUser().put("command_plugin", pc.getPlugin().getName());
+			getUser().put("command_name", commandName);
 
 			Replacer r = new Replacer().addClient(getUser());
 			tscs.sendMessage(r.replace(m));
@@ -90,6 +83,6 @@ public class TeamspeakCommandEvent extends TeamspeakEvent {
 		if (Configuration.TS_COMMANDS_LOGGING.getBoolean()) {
 			BungeeSpeak.log().info("TS client \"" + getClientName() + "\" executed command \"" + cmd + "\".");
 		}
-		BungeeSpeak.getInstance().getProxy().ch.dispatchCommand(tscs, cmd);
+		BungeeSpeak.getInstance().getProxy().getPluginManager().dispatchCommand(tscs, cmd);
 	}
 }

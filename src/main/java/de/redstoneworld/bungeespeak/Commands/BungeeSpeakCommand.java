@@ -67,7 +67,7 @@ public abstract class BungeeSpeakCommand {
 	}
 
 	protected boolean checkCommandPermission(CommandSender sender, String perm) {
-		return sender.hasPermission("bukkitspeak.commands." + perm);
+		return sender.hasPermission("bungeespeak.commands." + perm);
 	}
 
 	protected boolean isConnected(CommandSender sender) {

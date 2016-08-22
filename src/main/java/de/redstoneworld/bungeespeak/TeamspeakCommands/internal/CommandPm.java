@@ -47,7 +47,7 @@ public class CommandPm extends TeamspeakCommand {
 			m = MessageUtil.toMinecraft(m, true, Configuration.TS_ALLOW_LINKS.getBoolean());
 
 			if (!m.isEmpty()) {
-				if (!BungeeSpeak.getMuted(p) && p.hasPermission("bukkitspeak.messages.pm")) {
+				if (!BungeeSpeak.getMuted(p) && p.hasPermission("bungeespeak.messages.pm")) {
 					p.sendMessage(m);
 
 					String tsMsg = Messages.TS_COMMAND_PM.get();

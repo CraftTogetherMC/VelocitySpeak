@@ -11,9 +11,9 @@ import de.redstoneworld.bungeespeak.util.MessageUtil;
 import de.redstoneworld.bungeespeak.util.Replacer;
 import de.redstoneworld.bungeespeak.AsyncQueryUtils.QuerySender;
 
-import org.bukkit.Bukkit;
+
 import net.md_5.bungee.api.CommandSender;
-import org.bukkit.entity.Player;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import de.stefan1200.jts3serverquery.JTS3ServerQuery;
 
@@ -33,8 +33,8 @@ public class CommandReply extends BungeeSpeakCommand {
 		if (!isConnected(sender)) return;
 
 		Integer clid;
-		if (sender instanceof Player) {
-			clid = BungeeSpeak.getInstance().getSender(((Player) sender).getName());
+		if (sender instanceof ProxiedPlayer) {
+			clid = BungeeSpeak.getInstance().getSender(((ProxiedPlayer) sender).getName());
 		} else {
 			String n = MessageUtil.toMinecraft(Configuration.TS_CONSOLE_NAME.getString(), false, false);
 			clid = BungeeSpeak.getInstance().getSender(n);
@@ -64,9 +64,9 @@ public class CommandReply extends BungeeSpeakCommand {
 
 		if (tsMsg == null || tsMsg.isEmpty()) return;
 		QuerySender qs = new QuerySender(clid, JTS3ServerQuery.TEXTMESSAGE_TARGET_CLIENT, tsMsg);
-		Bukkit.getScheduler().runTaskAsynchronously(BungeeSpeak.getInstance(), qs);
+		BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qs);
 		if (mcMsg == null || mcMsg.isEmpty()) return;
-		if (sender instanceof Player) {
+		if (sender instanceof ProxiedPlayer) {
 			sender.sendMessage(MessageUtil.toMinecraft(mcMsg, true, Configuration.TS_ALLOW_LINKS.getBoolean()));
 		} else {
 			BungeeSpeak.log().info(MessageUtil.toMinecraft(mcMsg, false, Configuration.TS_ALLOW_LINKS.getBoolean()));

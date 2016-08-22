@@ -10,9 +10,9 @@ import de.redstoneworld.bungeespeak.Configuration.Configuration;
 import de.redstoneworld.bungeespeak.util.MessageUtil;
 import de.redstoneworld.bungeespeak.util.Replacer;
 
-import org.bukkit.Bukkit;
+
 import net.md_5.bungee.api.CommandSender;
-import org.bukkit.entity.Player;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import de.stefan1200.jts3serverquery.JTS3ServerQuery;
 
@@ -20,7 +20,7 @@ public abstract class SetProperty {
 
 	protected void send(CommandSender sender, Level level, String msg) {
 		String m = msg;
-		if (sender instanceof Player) {
+		if (sender instanceof ProxiedPlayer) {
 			m = m.replaceAll("((&|$)([a-fk-orA-FK-OR0-9]))", "\u00A7$3");
 			sender.sendMessage(BungeeSpeak.getFullName() + m);
 		} else {
@@ -53,12 +53,12 @@ public abstract class SetProperty {
 
 	protected void broadcastMessage(String mcMsg, CommandSender sender) {
 		if (mcMsg == null || mcMsg.isEmpty()) return;
-		for (Player pl : Bukkit.getServer().getOnlinePlayers()) {
+		for (ProxiedPlayer pl : BungeeSpeak.getInstance().getProxy().getPlayers()) {
 			if (!BungeeSpeak.getMuted(pl)) {
 				pl.sendMessage(MessageUtil.toMinecraft(mcMsg, true, Configuration.TS_ALLOW_LINKS.getBoolean()));
 			}
 		}
-		if (!(sender instanceof Player) || (Configuration.TS_LOGGING.getBoolean())) {
+		if (!(sender instanceof ProxiedPlayer) || (Configuration.TS_LOGGING.getBoolean())) {
 			BungeeSpeak.log().info(MessageUtil.toMinecraft(mcMsg, false, Configuration.TS_ALLOW_LINKS.getBoolean()));
 		}
 	}

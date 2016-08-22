@@ -1,6 +1,7 @@
 package de.redstoneworld.bungeespeak;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,8 +60,18 @@ public class BungeeSpeak extends Plugin {
 		pmRecipients = new HashMap<Integer, String>();
 		pmSenders = new HashMap<String, Integer>();
 
-		Configuration.reload();
-		Messages.reload();
+		try {
+			Configuration.reload();
+		} catch (IOException e) {
+			getLogger().severe("Unable to load configuration! " + getDescription().getName() + " will not be enabled!");
+			e.printStackTrace();
+			return;
+		}
+		try {
+			Messages.reload();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		query = new JTS3ServerQuery();
 		query.DEBUG = Configuration.TS_DEBUGGING.getBoolean();
@@ -264,7 +275,7 @@ public class BungeeSpeak extends Plugin {
 		}
 	}
 
-	public void setUpForTesting() throws NoSuchFieldException, IllegalAccessException {
+	public void setUpForTesting() throws NoSuchFieldException, IllegalAccessException, IOException {
 		instance = this;
 		logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 		logger.info("Setting up for testing.");

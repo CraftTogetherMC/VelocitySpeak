@@ -25,7 +25,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class TeamspeakCommandSender implements CommandSender {
 
-	private final boolean operator;
 	private final Map<String, Boolean> permissions;
 	private final Map<String, String> client;
 	private final String name;
@@ -33,11 +32,10 @@ public class TeamspeakCommandSender implements CommandSender {
 
 	private BufferSender outSender;
 
-	public TeamspeakCommandSender(Map<String, String> clientInfo, boolean op, Map<String, Boolean> perms) {
+	public TeamspeakCommandSender(Map<String, String> clientInfo, Map<String, Boolean> perms) {
 		client = clientInfo;
 		name = replaceValues(Messages.TS_COMMAND_SENDER_NAME.get());
 		outBuffer = Collections.synchronizedList(new LinkedList<String>());
-		operator = op;
 
 		permissions = new HashMap<String, Boolean>();
 		for (Map.Entry<String, Boolean> e : perms.entrySet()) {

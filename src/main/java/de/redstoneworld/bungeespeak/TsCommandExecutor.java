@@ -24,7 +24,6 @@ import net.md_5.bungee.api.plugin.Command;
 public class TsCommandExecutor extends Command {
 
 	private List<BungeeSpeakCommand> userCommands;
-	private List<BungeeSpeakCommand> adminCommands;
 
 	public TsCommandExecutor() {
 		super("ts");
@@ -65,7 +64,7 @@ public class TsCommandExecutor extends Command {
 	}
 
 	public Boolean checkPermissions(CommandSender sender, String perm) {
-		return sender.hasPermission("bukkitspeak.commands." + perm);
+		return sender.hasPermission("bungeespeak.commands." + perm);
 	}
 
 	public boolean onTeamspeakCommand(CommandSender sender, String[] args) {
@@ -88,33 +87,12 @@ public class TsCommandExecutor extends Command {
 		return false;
 	}
 
-	public boolean onTeamspeakAdminCommand(CommandSender sender, String[] args) {
-
-		String s = "adminhelp";
-		if (args.length > 0) {
-			s = args[0];
-		}
-
-		for (BungeeSpeakCommand bsc : adminCommands) {
-			for (String name : bsc.getNames()) {
-				if (name.equalsIgnoreCase(s)) {
-					if (!checkPermissions(sender, bsc.getName())) return false;
-					bsc.execute(sender, args);
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
 
 		switch (args.length) {
-		case 0:
-			return null;
-		case 1:
-			if (cmd.getName().equals("ts")) {
+			case 0:
+				return null;
+			case 1:
 				List<String> al = new ArrayList<String>();
 				for (BungeeSpeakCommand uc : userCommands) {
 					if (uc.getName().startsWith(args[0].toLowerCase())) {
@@ -122,19 +100,7 @@ public class TsCommandExecutor extends Command {
 					}
 				}
 				return al;
-			} else if (cmd.getName().equals("tsa")) {
-				List<String> al = new ArrayList<String>();
-				for (BungeeSpeakCommand ac : adminCommands) {
-					if (ac.getName().startsWith(args[0].toLowerCase())) {
-						if (checkPermissions(sender, ac.getName())) al.add(ac.getName());
-					}
-				}
-				return al;
-			} else {
-				return null;
-			}
-		default:
-			if (cmd.getName().equals("ts")) {
+			default:
 				for (BungeeSpeakCommand bsc : userCommands) {
 					for (String name : bsc.getNames()) {
 						if (name.equalsIgnoreCase(args[0])) {
@@ -144,19 +110,6 @@ public class TsCommandExecutor extends Command {
 					}
 				}
 				return null;
-			} else if (cmd.getName().equals("tsa")) {
-				for (BungeeSpeakCommand bsc : adminCommands) {
-					for (String name : bsc.getNames()) {
-						if (name.equalsIgnoreCase(args[0])) {
-							if (!checkPermissions(sender, bsc.getName())) return null;
-							return bsc.onTabComplete(sender, args);
-						}
-					}
-				}
-				return null;
-			} else {
-				return null;
-			}
 		}
 	}
 }

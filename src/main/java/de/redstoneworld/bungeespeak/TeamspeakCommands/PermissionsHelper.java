@@ -7,26 +7,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Vector;
-import java.util.logging.Level;
 
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import com.google.common.collect.Lists;
 
+import de.redstoneworld.bungeespeak.Configuration.YamlConfig;
 import de.stefan1200.jts3serverquery.JTS3ServerQuery;
+import net.md_5.bungee.config.Configuration;
 
 public final class PermissionsHelper implements Runnable {
 
-	private File permissionsFile;
-	private FileConfiguration permissionsConfig;
+	private YamlConfig permissionsConfig;
 	private HashMap<String, ServerGroup> serverGroupMap;
 
 	public PermissionsHelper() {
@@ -35,12 +30,17 @@ public final class PermissionsHelper implements Runnable {
 
 	public void runAsynchronously() {
 		// Start the permissions assignment task
-		BungeeSpeak.getInstance().getServer().getScheduler().runTaskAsynchronously(BungeeSpeak.getInstance(), this);
+		BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), this);
 	}
 
 	public void run() {
 		// Load the config
-		reload();
+		try {
+			reload();
+		} catch (IOException e) {
+			BungeeSpeak.log().severe("Error while loading permissions.yml");
+			e.printStackTrace();
+		}
 
 		HashMap<String, ServerGroup> serverGroups = new HashMap<String, ServerGroup>();
 		HashMap<String, HashMap<String, Boolean>> perms = new HashMap<String, HashMap<String, Boolean>>();
@@ -49,7 +49,7 @@ public final class PermissionsHelper implements Runnable {
 		Queue<String> resolved = new LinkedList<String>();
 		Queue<String> unresolved = new LinkedList<String>();
 
-		for (String key : permissionsConfig.getKeys(false)) {
+		for (String key : permissionsConfig.getKeys()) {
 			if (permissionsConfig.isConfigurationSection(key)) {
 				removedServerGroups.add(key);
 			}
@@ -70,64 +70,63 @@ public final class PermissionsHelper implements Runnable {
 			if (type == null || !("1".equals(type))) continue;
 
 			if (permissionsConfig.isConfigurationSection(id)) {
-				ConfigurationSection section = permissionsConfig.getConfigurationSection(id);
+				Configuration section = permissionsConfig.getSection(id);
 				section.set("name", group.get("name"));
-				if (!section.isBoolean("blocked")) {
+				if (!(section.get("blocked") instanceof Boolean)) {
 					section.set("blocked", false);
 				}
-				if (!section.isBoolean("op")) {
+				if (!(section.get("op") instanceof Boolean)) {
 					section.set("op", false);
 				}
-				if (!section.isConfigurationSection("permissions")) {
-					section.createSection("permissions").set("somePermission", true);
+				if (!permissionsConfig.isConfigurationSection(id + ".permissions")) {
+					section.set(id + ".permissions.somePermission", true);
 				}
-				if (!section.isList("plugin-whitelist")) {
-					section.set("plugin-whitelist", (List<String>) Lists.newArrayList("PluginNameFromPluginsCommand"));
+				if (!(section.get("command-whitelist") instanceof List<?>)) {
+					section.set("command-whitelist", Lists.newArrayList("SomeAllowedCommand"));
 				}
-				if (!section.isList("command-blacklist")) {
-					section.set("command-blacklist", (List<String>) Lists.newArrayList("SomeBlockedCommand"));
+				if (!(section.get("command-blacklist") instanceof List<?>)) {
+					section.set("command-blacklist", Lists.newArrayList("SomeBlockedCommand"));
 				}
-				Boolean op = section.getBoolean("op");
-				Boolean blocked = section.getBoolean("blocked");
-				ConfigurationSection cs = section.getConfigurationSection("permissions");
-				List<String> pluginWhitelist = section.getStringList("plugin-whitelist");
+				boolean op = section.getBoolean("op");
+				boolean blocked = section.getBoolean("blocked");
+				Configuration cs = section.getSection("permissions");
+				List<String> commandWhitelist = section.getStringList("command-whitelist");
 				List<String> commandBlacklist = section.getStringList("command-blacklist");
 				inherits.put(id, section.getStringList("inherits"));
 
-				if (op == null || blocked == null || cs == null || pluginWhitelist == null || commandBlacklist == null
-						|| inherits == null) {
+				if (cs.getKeys().isEmpty() || commandWhitelist == null || commandBlacklist == null) {
 					BungeeSpeak.log().severe("Error parsing TS3 server group " + id + ".");
 					continue;
 				}
 
 				// Don't waste time if someone is blocked anyways
-				if (blocked.booleanValue()) {
+				if (blocked) {
 					serverGroups.put(id, new ServerGroup(name, true));
 					perms.put(id, new HashMap<String, Boolean>());
 				} else {
-					serverGroups.put(id, new ServerGroup(name, op.booleanValue(), pluginWhitelist, commandBlacklist));
+					serverGroups.put(id, new ServerGroup(name, op, commandWhitelist, commandBlacklist));
 					perms.put(id, parseConfigSection(cs));
 				}
 
 				removedServerGroups.remove(id);
 			} else {
-				ConfigurationSection section = permissionsConfig.createSection(id);
+				Configuration section = permissionsConfig.getSection(id);
 				section.set("name", group.get("name"));
 				section.set("blocked", false);
 				section.set("op", false);
-				section.createSection("permissions").set("somePlugin.permission", true);
-				section.getConfigurationSection("permissions").createSection("OR_plugin").set("permission", true);
-				section.set("plugin-whitelist", (List<String>) Lists.newArrayList("PluginNameFromPluginsCommand"));
-				section.set("command-blacklist", (List<String>) Lists.newArrayList("SomeBlockedCommand"));
-				section.set("inherits", (List<String>) new ArrayList<String>());
+				section.set("permissions.somePlugin.permission", true);
+				section.set("permissions.OR_plugin.permission", true);
+				section.set("plugin-whitelist", Lists.newArrayList("PluginNameFromPluginsCommand"));
+				section.set("command-blacklist", Lists.newArrayList("SomeBlockedCommand"));
+				section.set("inherits", new ArrayList<String>());
 
 				serverGroups.put(id, new ServerGroup(group.get("name")));
-				perms.put(id, parseConfigSection(section.getConfigurationSection("permissions")));
+				perms.put(id, parseConfigSection(section.getSection("permissions")));
 			}
 		}
 
 		for (String id : removedServerGroups) {
-			permissionsConfig.getConfigurationSection(id).set("removed", "This server group has been removed on Teamspeak.");
+			permissionsConfig.set(id + ".removed", "This server group has been removed on Teamspeak.");
 			BungeeSpeak.log().warning("Obsolete permissions.yml server group entry: ID " + id + ".");
 		}
 
@@ -163,7 +162,7 @@ public final class PermissionsHelper implements Runnable {
 						i.remove(id);
 						ServerGroup target = serverGroups.get(u);
 						target.getPermissions().putAll(sg.getPermissions());
-						target.getPluginWhitelist().addAll(sg.getPluginWhitelist());
+						target.getCommandWhitelist().addAll(sg.getCommandWhitelist());
 						target.getCommandBlacklist().addAll(sg.getCommandBlacklist());
 						if (i.size() == 0) {
 							resolved.add(u);
@@ -213,15 +212,16 @@ public final class PermissionsHelper implements Runnable {
 		serverGroupMap = serverGroups;
 	}
 
-	private HashMap<String, Boolean> parseConfigSection(ConfigurationSection cs) {
+	private HashMap<String, Boolean> parseConfigSection(Configuration cs) {
 		HashMap<String, Boolean> map = new HashMap<String, Boolean>();
-		for (Map.Entry<String, Object> entry : cs.getValues(true).entrySet()) {
-			String key = entry.getKey().replace('/', '.');
-			if (entry.getValue() instanceof Boolean) {
-				map.put(key, (Boolean) entry.getValue());
-			} else if (!(entry.getValue() instanceof ConfigurationSection)) {
+		for (String cKey : cs.getKeys()) {
+			Object value = cs.get(cKey);
+			String key = cKey.replace('/', '.');
+			if (value instanceof Boolean) {
+				map.put(key, (Boolean) value);
+			} else if (!(value instanceof Configuration)) {
 				BungeeSpeak.log().warning("Key " + key + " in the permissions for server group "
-						+ cs.getCurrentPath().split("/")[0] + " did not have a boolean value assigned.");
+						+ cKey.split("/")[0] + " did not have a boolean value assigned.");
 			}
 		}
 		return map;
@@ -248,7 +248,7 @@ public final class PermissionsHelper implements Runnable {
 			groupName.append(sg.getName()).append(", ");
 			combined.setOp(combined.isOp() || sg.isOp());
 			combined.getPermissions().putAll(sg.getPermissions());
-			combined.getPluginWhitelist().addAll(sg.getPluginWhitelist());
+			combined.getCommandWhitelist().addAll(sg.getCommandWhitelist());
 			combined.getCommandBlacklist().addAll(sg.getCommandBlacklist());
 		}
 
@@ -261,20 +261,13 @@ public final class PermissionsHelper implements Runnable {
 		return serverGroupMap.get(id);
 	}
 
-	public void reload() {
-		if (permissionsFile == null) {
-			permissionsFile = new File(BungeeSpeak.getInstance().getDataFolder(), "permissions.yml");
-		}
-		permissionsConfig = YamlConfiguration.loadConfiguration(permissionsFile);
-		permissionsConfig.options().pathSeparator('/');
+	public void reload() throws IOException {
+		BungeeSpeak.log().info("Loading config!");
+		permissionsConfig = new YamlConfig(BungeeSpeak.getInstance(), BungeeSpeak.getInstance().getDataFolder() + File.separator + "permissions.yml");
 	}
 
 	public void save() {
-		if ((permissionsFile == null) || (permissionsConfig == null)) return;
-		try {
-			permissionsConfig.save(permissionsFile);
-		} catch (IOException e) {
-			BungeeSpeak.log().log(Level.SEVERE, "Could not save the locale file to " + permissionsFile, e);
-		}
+		if (permissionsConfig == null) return;
+		permissionsConfig.save();
 	}
 }

@@ -12,7 +12,6 @@ import de.redstoneworld.bungeespeak.util.MessageUtil;
 import de.redstoneworld.bungeespeak.util.Replacer;
 import de.redstoneworld.bungeespeak.AsyncQueryUtils.QueryBan;
 
-import org.bukkit.Bukkit;
 import net.md_5.bungee.api.CommandSender;
 
 public class CommandBan extends BungeeSpeakCommand {
@@ -54,7 +53,7 @@ public class CommandBan extends BungeeSpeakCommand {
 
 		Integer i = Integer.valueOf(client.get("clid"));
 		QueryBan qb = new QueryBan(i, tsMsg);
-		Bukkit.getScheduler().runTaskAsynchronously(BungeeSpeak.getInstance(), qb);
+		BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qb);
 		broadcastMessage(mcMsg, sender);
 	}
 

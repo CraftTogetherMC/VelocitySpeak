@@ -8,7 +8,7 @@ import de.redstoneworld.bungeespeak.Configuration.Messages;
 import de.redstoneworld.bungeespeak.util.Replacer;
 
 import net.md_5.bungee.api.CommandSender;
-import org.bukkit.entity.Player;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class CommandMute extends BungeeSpeakCommand {
 
@@ -18,20 +18,20 @@ public class CommandMute extends BungeeSpeakCommand {
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		if (sender instanceof Player) {
-			if (BungeeSpeak.getMuted((Player) sender)) {
-				BungeeSpeak.setMuted((Player) sender, false);
+		if (sender instanceof ProxiedPlayer) {
+			if (BungeeSpeak.getMuted((ProxiedPlayer) sender)) {
+				BungeeSpeak.setMuted((ProxiedPlayer) sender, false);
 
 				String mcMsg = Messages.MC_COMMAND_UNMUTE.get();
-				mcMsg = new Replacer().addPlayer((Player) sender).replace(mcMsg);
+				mcMsg = new Replacer().addPlayer((ProxiedPlayer) sender).replace(mcMsg);
 
 				if (mcMsg == null || mcMsg.isEmpty()) return;
 				send(sender, Level.INFO, mcMsg);
 			} else {
-				BungeeSpeak.setMuted((Player) sender, true);
+				BungeeSpeak.setMuted((ProxiedPlayer) sender, true);
 
 				String mcMsg = Messages.MC_COMMAND_MUTE.get();
-				mcMsg = new Replacer().addPlayer((Player) sender).replace(mcMsg);
+				mcMsg = new Replacer().addPlayer((ProxiedPlayer) sender).replace(mcMsg);
 
 				if (mcMsg == null || mcMsg.isEmpty()) return;
 				send(sender, Level.INFO, mcMsg);

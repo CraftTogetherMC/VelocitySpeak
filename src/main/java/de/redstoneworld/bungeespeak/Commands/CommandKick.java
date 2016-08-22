@@ -12,7 +12,7 @@ import de.redstoneworld.bungeespeak.Configuration.Messages;
 import de.redstoneworld.bungeespeak.util.MessageUtil;
 import de.redstoneworld.bungeespeak.util.Replacer;
 
-import org.bukkit.Bukkit;
+
 import net.md_5.bungee.api.CommandSender;
 
 public class CommandKick extends BungeeSpeakCommand {
@@ -54,7 +54,7 @@ public class CommandKick extends BungeeSpeakCommand {
 
 		Integer i = Integer.valueOf(client.get("clid"));
 		QueryKick qk = new QueryKick(i, false, tsMsg);
-		Bukkit.getScheduler().runTaskAsynchronously(BungeeSpeak.getInstance(), qk);
+		BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qk);
 		broadcastMessage(mcMsg, sender);
 	}
 

@@ -13,128 +13,128 @@ commands:
     description: BungeeSpeak admin commands
     usage: Type /tsa for help.
 permissions:
-  bukkitspeak.*:
+  bungeespeak.*:
     description: Gives access to all BungeeSpeak commands and messages.
     default: op
     children:
-      bukkitspeak.commands.*: true
-      bukkitspeak.messages.*: true
-  bukkitspeak.moderator:
+      bungeespeak.commands.*: true
+      bungeespeak.messages.*: true
+  bungeespeak.moderator:
     description: Gives access to all user commands, all the messages and some admin commands.
     children:
-      bukkitspeak.commands.user: true
-      bukkitspeak.commands.channelkick: true
-      bukkitspeak.commands.reload: true
-      bukkitspeak.commands.status: true
-      bukkitspeak.messages.*: true
-  bukkitspeak.user:
+      bungeespeak.commands.user: true
+      bungeespeak.commands.channelkick: true
+      bungeespeak.commands.reload: true
+      bungeespeak.commands.status: true
+      bungeespeak.messages.*: true
+  bungeespeak.user:
     description: Gives access to most of the user commands and all messages.
     children:
-      bukkitspeak.commands.help: true
-      bukkitspeak.commands.list: true
-      bukkitspeak.commands.mute: true
-      bukkitspeak.commands.chat: true
-      bukkitspeak.commands.pm: true
-      bukkitspeak.commands.reply: true
-      bukkitspeak.commands.info: true
-      bukkitspeak.messages.*: true
-  bukkitspeak.commands.*:
+      bungeespeak.commands.help: true
+      bungeespeak.commands.list: true
+      bungeespeak.commands.mute: true
+      bungeespeak.commands.chat: true
+      bungeespeak.commands.pm: true
+      bungeespeak.commands.reply: true
+      bungeespeak.commands.info: true
+      bungeespeak.messages.*: true
+  bungeespeak.commands.*:
     description: Gives access to all BungeeSpeak commands.
     children:
-      bukkitspeak.commands.user: true
-      bukkitspeak.commands.admin: true
-  bukkitspeak.commands.user:
+      bungeespeak.commands.user: true
+      bungeespeak.commands.admin: true
+  bungeespeak.commands.user:
     description: Gives access to all user commands.
     children:
-      bukkitspeak.commands.help: true
-      bukkitspeak.commands.list: true
-      bukkitspeak.commands.mute: true
-      bukkitspeak.commands.broadcast: true
-      bukkitspeak.commands.chat: true
-      bukkitspeak.commands.pm: true
-      bukkitspeak.commands.reply: true
-      bukkitspeak.commands.poke: true
-      bukkitspeak.commands.info: true
-  bukkitspeak.commands.admin:
+      bungeespeak.commands.help: true
+      bungeespeak.commands.list: true
+      bungeespeak.commands.mute: true
+      bungeespeak.commands.broadcast: true
+      bungeespeak.commands.chat: true
+      bungeespeak.commands.pm: true
+      bungeespeak.commands.reply: true
+      bungeespeak.commands.poke: true
+      bungeespeak.commands.info: true
+  bungeespeak.commands.admin:
     description: Gives access to all admin commands.
     children:
-      bukkitspeak.commands.ban: true
-      bukkitspeak.commands.kick: true
-      bukkitspeak.commands.channelkick: true
-      bukkitspeak.commands.set: true
-      bukkitspeak.commands.status: true
-      bukkitspeak.commands.reload: true
-  bukkitspeak.commands.help:
+      bungeespeak.commands.ban: true
+      bungeespeak.commands.kick: true
+      bungeespeak.commands.channelkick: true
+      bungeespeak.commands.set: true
+      bungeespeak.commands.status: true
+      bungeespeak.commands.reload: true
+  bungeespeak.commands.help:
     description: Allows you to show BungeeSpeak's help menu.
     default: true
-  bukkitspeak.commands.list:
+  bungeespeak.commands.list:
     description: Allows you to use /ts list.
-  bukkitspeak.commands.mute:
+  bungeespeak.commands.mute:
     description: Allows you to use /ts mute.
-  bukkitspeak.commands.broadcast:
+  bungeespeak.commands.broadcast:
     description: Allows you to use /ts broadcast <message>.
-  bukkitspeak.commands.chat:
+  bungeespeak.commands.chat:
     description: Allows you to use /ts chat <message>.
-  bukkitspeak.commands.pm:
+  bungeespeak.commands.pm:
     description: Allows you to use /ts pm target <message>.
-  bukkitspeak.commands.reply:
+  bungeespeak.commands.reply:
     description: Allows you to use /ts r(eply) <message>.
-  bukkitspeak.commands.poke:
+  bungeespeak.commands.poke:
     description: Allows you to use /ts poke <target> <message>.
-  bukkitspeak.commands.info:
+  bungeespeak.commands.info:
     description: Allows you to use /ts info.
-  bukkitspeak.commands.ban:
+  bungeespeak.commands.ban:
     description: Allows you to use /tsa ban <target> (reason).
-  bukkitspeak.commands.kick:
+  bungeespeak.commands.kick:
     description: Allows you to use /tsa kick <target> (reason).
-  bukkitspeak.commands.channelkick:
+  bungeespeak.commands.channelkick:
     description: Allows you to use /tsa channelkick <target> (reason).
-  bukkitspeak.commands.set:
+  bungeespeak.commands.set:
     description: Allows you to use /tsa set (property) (value).
-  bukkitspeak.commands.status:
+  bungeespeak.commands.status:
     description: Allows you to use /tsa status.
-  bukkitspeak.commands.reload:
+  bungeespeak.commands.reload:
     description: Allows you to use /tsa reload.
-  bukkitspeak.messages.*:
+  bungeespeak.messages.*:
     description: Allows you to see all messages.
     children:
-      bukkitspeak.messages.join: true
-      bukkitspeak.messages.leave: true
-      bukkitspeak.messages.channelenter: true
-      bukkitspeak.messages.channelleave: true
-      bukkitspeak.messages.broadcast: true
-      bukkitspeak.messages.chat: true
-      bukkitspeak.messages.pm: true
-  bukkitspeak.messages.join:
+      bungeespeak.messages.join: true
+      bungeespeak.messages.leave: true
+      bungeespeak.messages.channelenter: true
+      bungeespeak.messages.channelleave: true
+      bungeespeak.messages.broadcast: true
+      bungeespeak.messages.chat: true
+      bungeespeak.messages.pm: true
+  bungeespeak.messages.join:
     description: Displays a message when somebody joined TeamSpeak.
-  bukkitspeak.messages.leave:
+  bungeespeak.messages.leave:
     description: Displays a message when somebody left TeamSpeak.
-  bukkitspeak.messages.channelenter:
+  bungeespeak.messages.channelenter:
     description: Displays a message when somebody entered the channel BungeeSpeak is listening to.
-  bukkitspeak.messages.channelleave:
+  bungeespeak.messages.channelleave:
     description: Displays a message when somebody left the channel BungeeSpeak is listening to.
-  bukkitspeak.messages.broadcast:
+  bungeespeak.messages.broadcast:
     description: Shows you messages which were broadcasted on TeamSpeak.
-  bukkitspeak.messages.chat:
+  bungeespeak.messages.chat:
     description: Shows you chat messages in the channel BungeeSpeak is listening to.
-  bukkitspeak.messages.pm:
+  bungeespeak.messages.pm:
     description: Shows you a message if somebody replies to your private message.
-  bukkitspeak.sendteamspeak.*:
+  bungeespeak.sendteamspeak.*:
     description: All messages will be sent to TeamSpeak.
     default: true
     children:
-      bukkitspeak.sendteamspeak.chat: true
-      bukkitspeak.sendteamspeak.join: true
-      bukkitspeak.sendteamspeak.quit: true
-      bukkitspeak.sendteamspeak.kick: true
-      bukkitspeak.sendteamspeak.ban: true
-  bukkitspeak.sendteamspeak.chat:
+      bungeespeak.sendteamspeak.chat: true
+      bungeespeak.sendteamspeak.join: true
+      bungeespeak.sendteamspeak.quit: true
+      bungeespeak.sendteamspeak.kick: true
+      bungeespeak.sendteamspeak.ban: true
+  bungeespeak.sendteamspeak.chat:
     description: Sends messages of this user to TeamSpeak if SendChatToTeamspeak is set in the config.
-  bukkitspeak.sendteamspeak.join:
+  bungeespeak.sendteamspeak.join:
     desctiption: Sends a Teamspeak message when the user joins the Minecraft server.
-  bukkitspeak.sendteamspeak.quit:
+  bungeespeak.sendteamspeak.quit:
     description: Sends a Teamspeak message when the user leaves the Minecraft server.
-  bukkitspeak.sendteamspeak.kick:
+  bungeespeak.sendteamspeak.kick:
     description: Sends a Teamspeak message when the user gets kicked from the Minecraft server.
-  bukkitspeak.sendteamspeak.ban:
+  bungeespeak.sendteamspeak.ban:
     description: Sends a Teamspeak message when the user gets banned from the Minecraft server.

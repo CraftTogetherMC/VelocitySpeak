@@ -61,7 +61,7 @@ public abstract class TeamspeakEvent {
 	}
 
 	protected boolean checkPermissions(ProxiedPlayer player, String perm) {
-		return player.hasPermission("bukkitspeak.messages." + perm);
+		return player.hasPermission("bungeespeak.messages." + perm);
 	}
 
 	protected abstract void performAction();

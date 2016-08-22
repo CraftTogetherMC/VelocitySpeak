@@ -11,7 +11,7 @@ import de.redstoneworld.bungeespeak.util.Replacer;
 import de.redstoneworld.bungeespeak.AsyncQueryUtils.QuerySender;
 import de.redstoneworld.bungeespeak.util.MessageUtil;
 
-import org.bukkit.Bukkit;
+
 import net.md_5.bungee.api.CommandSender;
 
 import de.stefan1200.jts3serverquery.JTS3ServerQuery;

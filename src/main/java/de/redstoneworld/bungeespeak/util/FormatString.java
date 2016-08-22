@@ -1,5 +1,7 @@
 package de.redstoneworld.bungeespeak.util;
 
+import net.md_5.bungee.api.ChatColor;
+
 public enum FormatString {
 
 	BLACK('0', "color", "#000000"),
@@ -51,7 +53,7 @@ public enum FormatString {
 	}
 
 	public String getMinecraftFormatString() {
-		return "\u00A7" + String.valueOf(minecraftChar);
+		return ChatColor.COLOR_CHAR + String.valueOf(minecraftChar);
 	}
 
 	public String getTeamspeakBBTag() {

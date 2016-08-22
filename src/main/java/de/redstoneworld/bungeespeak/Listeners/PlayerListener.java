@@ -108,6 +108,6 @@ public class PlayerListener implements Listener {
 	}
 
 	private boolean hasPermission(ProxiedPlayer player, String perm) {
-		return player.hasPermission("bukkitspeak.sendteamspeak." + perm);
+		return player.hasPermission("bungeespeak.sendteamspeak." + perm);
 	}
 }

@@ -20,7 +20,6 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class TsaCommandExecutor extends Command {
 
-	private List<BungeeSpeakCommand> userCommands;
 	private List<BungeeSpeakCommand> adminCommands;
 
 	public TsaCommandExecutor() {
@@ -54,7 +53,7 @@ public class TsaCommandExecutor extends Command {
 	}
 
 	public Boolean checkPermissions(CommandSender sender, String perm) {
-		return sender.hasPermission("bukkitspeak.commands." + perm);
+		return sender.hasPermission("bungeespeak.commands." + perm);
 	}
 
 	public boolean onTeamspeakAdminCommand(CommandSender sender, String[] args) {
@@ -83,49 +82,23 @@ public class TsaCommandExecutor extends Command {
 			case 0:
 				return null;
 			case 1:
-				if (cmd.getName().equals("ts")) {
-					List<String> al = new ArrayList<String>();
-					for (BungeeSpeakCommand uc : userCommands) {
-						if (uc.getName().startsWith(args[0].toLowerCase())) {
-							if (checkPermissions(sender, uc.getName())) al.add(uc.getName());
-						}
+				List<String> al = new ArrayList<String>();
+				for (BungeeSpeakCommand ac : adminCommands) {
+					if (ac.getName().startsWith(args[0].toLowerCase())) {
+						if (checkPermissions(sender, ac.getName())) al.add(ac.getName());
 					}
-					return al;
-				} else if (cmd.getName().equals("tsa")) {
-					List<String> al = new ArrayList<String>();
-					for (BungeeSpeakCommand ac : adminCommands) {
-						if (ac.getName().startsWith(args[0].toLowerCase())) {
-							if (checkPermissions(sender, ac.getName())) al.add(ac.getName());
-						}
-					}
-					return al;
-				} else {
-					return null;
 				}
+				return al;
 			default:
-				if (cmd.getName().equals("ts")) {
-					for (BungeeSpeakCommand bsc : userCommands) {
-						for (String name : bsc.getNames()) {
-							if (name.equalsIgnoreCase(args[0])) {
-								if (!checkPermissions(sender, bsc.getName())) return null;
-								return bsc.onTabComplete(sender, args);
-							}
+				for (BungeeSpeakCommand bsc : adminCommands) {
+					for (String name : bsc.getNames()) {
+						if (name.equalsIgnoreCase(args[0])) {
+							if (!checkPermissions(sender, bsc.getName())) return null;
+							return bsc.onTabComplete(sender, args);
 						}
 					}
-					return null;
-				} else if (cmd.getName().equals("tsa")) {
-					for (BungeeSpeakCommand bsc : adminCommands) {
-						for (String name : bsc.getNames()) {
-							if (name.equalsIgnoreCase(args[0])) {
-								if (!checkPermissions(sender, bsc.getName())) return null;
-								return bsc.onTabComplete(sender, args);
-							}
-						}
-					}
-					return null;
-				} else {
-					return null;
 				}
+				return null;
 		}
 	}
 }

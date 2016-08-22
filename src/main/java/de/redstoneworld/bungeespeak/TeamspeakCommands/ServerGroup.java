@@ -11,7 +11,7 @@ public class ServerGroup {
 	private boolean blocked;
 	private boolean operator;
 	private Map<String, Boolean> permissions;
-	private List<String> pluginWhitelist;
+	private List<String> commandWhitelist;
 	private List<String> commandBlacklist;
 
 	public ServerGroup(String name) {
@@ -23,7 +23,7 @@ public class ServerGroup {
 		blocked = block;
 		operator = false;
 		permissions = new HashMap<String, Boolean>();
-		pluginWhitelist = new ArrayList<String>();
+		commandWhitelist = new ArrayList<String>();
 		commandBlacklist = new ArrayList<String>();
 	}
 
@@ -41,7 +41,7 @@ public class ServerGroup {
 		blocked = block;
 		operator = op;
 		permissions = perms;
-		pluginWhitelist = pw;
+		commandWhitelist = pw;
 		commandBlacklist = cb;
 	}
 
@@ -73,8 +73,8 @@ public class ServerGroup {
 		return permissions;
 	}
 
-	public List<String> getPluginWhitelist() {
-		return pluginWhitelist;
+	public List<String> getCommandWhitelist() {
+		return commandWhitelist;
 	}
 
 	public List<String> getCommandBlacklist() {
