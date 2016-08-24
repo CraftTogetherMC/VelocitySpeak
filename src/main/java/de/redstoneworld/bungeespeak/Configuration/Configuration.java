@@ -3,12 +3,10 @@ package de.redstoneworld.bungeespeak.Configuration;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
 
+import de.redstoneworld.bungeespeak.Listeners.ChatListener;
 import de.redstoneworld.bungeespeak.TsTarget;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.event.EventPriority;
 
 
 public enum Configuration {
@@ -34,7 +32,7 @@ public enum Configuration {
 	TS_MESSAGES_TARGET("teamspeak.SendChatToTeamspeak", "channel"),
 	TS_LIST_GROUPING("teamspeak.GroupClientListByServerGroup", false),
 	TS_LOGGING("teamspeak.LogChatInConsole", true),
-	TS_CHAT_LISTENER_PRIORITY("teamspeak.ChatListenerPriority", "MONITOR"),
+	TS_CHAT_LISTENER_PRIORITY("teamspeak.ChatListenerPriority", "HIGHEST"),
 	TS_DEBUGGING("teamspeak.Debug", false),
 
 	TS_COMMANDS_ENABLED("teamspeak-commands.Enabled", false),
@@ -100,6 +98,17 @@ public enum Configuration {
 
 	public long getLong() {
 		return config.getLong(path, (Long) defValue);
+	}
+
+	public ChatListener.Priority getPriority() {
+		ChatListener.Priority p;
+		try {
+			p = ChatListener.Priority.valueOf(getString().toUpperCase());
+			return p;
+		} catch (IllegalArgumentException e) {
+			BungeeSpeak.log().warning("Config value \"" + path + "\" did not match LOWEST, LOW, NORMAL, HIGH, HIGHEST or MONITOR!");
+		}
+		return ChatListener.Priority.NORMAL;
 	}
 
 	public List<?> getList() {

@@ -89,7 +89,7 @@ public class BungeeSpeak extends Plugin {
 		mcTsaCommand = new TsaCommandExecutor();
 		tsCommand = new TeamspeakCommandExecutor();
 		playerListener = new PlayerListener();
-		chatListener = new ChatListener();
+		chatListener = new ChatListener(Configuration.TS_CHAT_LISTENER_PRIORITY.getPriority());
 
 		getProxy().getPluginManager().registerListener(this, chatListener);
 		getProxy().getPluginManager().registerListener(this, playerListener);
@@ -260,6 +260,7 @@ public class BungeeSpeak extends Plugin {
 			Configuration.reload();
 			Messages.reload();
 			query.DEBUG = Configuration.TS_DEBUGGING.getBoolean();
+			chatListener.setPriority(Configuration.TS_CHAT_LISTENER_PRIORITY.getPriority());
 
 			tsCommand = new TeamspeakCommandExecutor();
 

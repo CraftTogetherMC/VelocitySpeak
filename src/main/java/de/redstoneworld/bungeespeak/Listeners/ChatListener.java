@@ -17,8 +17,39 @@ import net.md_5.bungee.event.EventPriority;
 
 public class ChatListener implements Listener {
 
+	private Priority priority;
+
+	public ChatListener(Priority priority) {
+		setPriority(priority);
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onChat(ChatEvent e) {
+	public void onChatHighest(ChatEvent e) {
+		handle(e, Priority.HIGHEST);
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onChatHigh(ChatEvent e) {
+		handle(e, Priority.HIGH);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onChatNormal(ChatEvent e) {
+		handle(e, Priority.NORMAL);
+	}
+
+	@EventHandler(priority = EventPriority.LOW)
+	public void onChatLow(ChatEvent e) {
+		handle(e, Priority.LOW);
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onChatLowest(ChatEvent e) {
+		handle(e, Priority.LOWEST);
+	}
+
+	public void handle(ChatEvent e, Priority priority) {
+		if (priority != this.priority) return;
 		if (!BungeeSpeak.getInstance().isEnabled()) return;
 		if (Configuration.TS_MESSAGES_TARGET.getTeamspeakTarget() == TsTarget.NONE) return;
 		if (e.getSender() == null || !(e.getSender() instanceof ProxiedPlayer) || e.getMessage().isEmpty()) return;
@@ -52,5 +83,27 @@ public class ChatListener implements Listener {
 
 	private boolean hasPermission(ProxiedPlayer player, String perm) {
 		return player.hasPermission("bungeespeak.sendteamspeak." + perm);
+	}
+
+	public void setPriority(Priority priority) {
+		this.priority = priority;
+	}
+
+	public enum Priority {
+		LOWEST(EventPriority.LOWEST),
+		LOW(EventPriority.LOW),
+		NORMAL(EventPriority.NORMAL),
+		HIGH(EventPriority.HIGH),
+		HIGHEST(EventPriority.HIGHEST);
+
+		public final byte eventPriority;
+
+		private Priority(final byte eventPriority) {
+			this.eventPriority = eventPriority;
+		}
+
+		public int getEventPriority() {
+			return eventPriority;
+		}
 	}
 }

@@ -32,10 +32,10 @@ teamspeak:
   LogChatInConsole: true
   
   # The priority of the chat listener.
-  # By default, BungeeSpeak ignores all cancelled events (MONITOR).
+  # By default, BungeeSpeak tries to ignore all cancelled events (HIGHEST).
   # You can change this value to allow some or all (LOWEST) cancelled events to still be checked.
-  # Read more about chat priorities here: http://wiki.bukkit.org/Event_API_Reference#Event_Priorities
-  ChatListenerPriority: MONITOR
+  # Read more about chat priorities here: http://ci.md-5.net/job/BungeeCord/ws/event/target/apidocs/net/md_5/bungee/event/EventPriority.html
+  ChatListenerPriority: HIGHEST
   
   # Debug Mode
   # Use if the plugin doesn't work at all
