@@ -12,25 +12,20 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
-
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 import org.junit.*;
 
 public class ConfigurationTest {
 
-	private FileConfiguration defaults;
+	private net.md_5.bungee.config.Configuration defaults;
 
 	public ConfigurationTest() {
-		defaults = new YamlConfiguration();
+		defaults = new net.md_5.bungee.config.Configuration();
 		try {
 			InputStreamReader in = new InputStreamReader(getResource("config.yml"));
-			defaults.load(in);
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		} catch (InvalidConfigurationException e) {
+			defaults = ConfigurationProvider.getProvider(YamlConfiguration.class).load(in);
+		} catch (NullPointerException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -38,7 +33,7 @@ public class ConfigurationTest {
 
 	@Test
 	public void checkAllPathsValid() {
-		Pattern p = Pattern.compile("(?:[\\w\\-]+" + Pattern.quote(String.valueOf(defaults.options().pathSeparator()))
+		Pattern p = Pattern.compile("(?:[\\w\\-]+" + Pattern.quote(".")
 				+ ")*[\\w\\-]+");
 		for (Configuration c : Configuration.values()) {
 			if (!p.matcher(c.getConfigPath()).matches()) {
@@ -61,8 +56,8 @@ public class ConfigurationTest {
 	@Test
 	public void checkAllValuesExist() {
 		List<String> keys = new ArrayList<String>();
-		for (String s : defaults.getKeys(true)) {
-			if (!defaults.isConfigurationSection(s)) {
+		for (String s : defaults.getKeys()) {
+			if (defaults.getSection(s).getKeys().isEmpty()) {
 				keys.add(s);
 			}
 		}

@@ -13,24 +13,21 @@ import java.util.regex.Pattern;
 
 import de.redstoneworld.bungeespeak.Configuration.Messages;
 
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 import org.junit.*;
 
 public class MessagesTest {
 
-	private FileConfiguration defaults;
+	private Configuration defaults;
 
 	public MessagesTest() {
-		defaults = new YamlConfiguration();
+		defaults = new Configuration();
 		try {
 			InputStreamReader in = new InputStreamReader(getResource("locale.yml"));
-			defaults.load(in);
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		} catch (InvalidConfigurationException e) {
+			defaults = ConfigurationProvider.getProvider(YamlConfiguration.class).load(in);
+		} catch (NullPointerException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -38,7 +35,7 @@ public class MessagesTest {
 
 	@Test
 	public void checkAllPathsValid() {
-		Pattern p = Pattern.compile("(?:[\\w\\-]+" + Pattern.quote(String.valueOf(defaults.options().pathSeparator()))
+		Pattern p = Pattern.compile("(?:[\\w\\-]+" + Pattern.quote(".")
 				+ ")*[\\w\\-]+");
 		for (Messages m : Messages.values()) {
 			if (!p.matcher(m.getConfigPath()).matches()) {
@@ -63,8 +60,8 @@ public class MessagesTest {
 	@Test
 	public void checkAllValuesExist() {
 		List<String> keys = new ArrayList<String>();
-		for (String s : defaults.getKeys(true)) {
-			if (!defaults.isConfigurationSection(s)) {
+		for (String s : defaults.getKeys()) {
+			if (defaults.getSection(s).getKeys().isEmpty()) {
 				keys.add(s);
 			}
 		}
