@@ -17,8 +17,9 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class TsaCommandExecutor extends Command {
+public class TsaCommandExecutor extends Command implements TabExecutor {
 
 	private List<BungeeSpeakCommand> adminCommands;
 
@@ -76,7 +77,8 @@ public class TsaCommandExecutor extends Command {
 		return false;
 	}
 
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
+	@Override
+	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 
 		switch (args.length) {
 			case 0:
