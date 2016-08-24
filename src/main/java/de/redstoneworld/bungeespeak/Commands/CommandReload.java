@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 

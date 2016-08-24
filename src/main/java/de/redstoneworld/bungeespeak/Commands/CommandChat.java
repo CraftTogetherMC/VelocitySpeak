@@ -53,7 +53,7 @@ public class CommandChat extends BungeeSpeakCommand {
 		if (tsMsg == null || tsMsg.isEmpty()) return;
 		QuerySender qs = new QuerySender(BungeeSpeak.getQuery().getCurrentQueryClientChannelID(),
 				JTS3ServerQuery.TEXTMESSAGE_TARGET_CHANNEL, tsMsg);
-		Bukkit.getScheduler().scheduleSyncDelayedTask(BungeeSpeak.getInstance(), qs);
+		BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qs);
 		broadcastMessage(mcMsg, sender);
 	}
 
