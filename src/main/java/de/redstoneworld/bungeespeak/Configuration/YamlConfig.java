@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class YamlConfig {
     private Configuration defaultCfg = null;
@@ -150,6 +151,6 @@ public class YamlConfig {
     }
 
     public boolean isConfigurationSection(String key) {
-        return !cfg.getSection(key).getKeys().isEmpty();
+        return cfg.get(key) instanceof Map;
     }
 }
