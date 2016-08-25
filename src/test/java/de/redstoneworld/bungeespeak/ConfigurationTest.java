@@ -73,7 +73,9 @@ public class ConfigurationTest {
 		List<String> keys = new ArrayList<String>();
 		for (String s : c.getKeys()){
 			if (c.get(s) instanceof Map) {
-				keys.addAll(getAllKeys(c.getSection(s)));
+				for (String key : getAllKeys(c.getSection(s))) {
+					keys.add(s + "." + key);
+				}
 			} else {
 				keys.add(s);
 			}
