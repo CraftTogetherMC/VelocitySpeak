@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import de.redstoneworld.bungeespeak.Configuration.Messages;
@@ -59,12 +60,7 @@ public class MessagesTest {
 
 	@Test
 	public void checkAllValuesExist() {
-		List<String> keys = new ArrayList<String>();
-		for (String s : defaults.getKeys()) {
-			if (defaults.getSection(s).getKeys().isEmpty()) {
-				keys.add(s);
-			}
-		}
+		List<String> keys = getAllKeys(defaults);
 
 		for (Messages m : Messages.values()) {
 			if (!keys.remove(m.getConfigPath())) {
@@ -75,6 +71,18 @@ public class MessagesTest {
 		for (String key : keys) {
 			fail(key + " was set in the default file, but not in the config.");
 		}
+	}
+
+	private List<String> getAllKeys(net.md_5.bungee.config.Configuration c) {
+		List<String> keys = new ArrayList<String>();
+		for (String s : c.getKeys()){
+			if (c.get(s) instanceof Map) {
+				keys.addAll(getAllKeys(c.getSection(s)));
+			} else {
+				keys.add(s);
+			}
+		}
+		return keys;
 	}
 
 	private InputStream getResource(String filename) {
