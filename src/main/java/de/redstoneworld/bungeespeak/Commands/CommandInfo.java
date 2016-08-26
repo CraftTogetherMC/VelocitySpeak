@@ -6,6 +6,8 @@ import java.util.logging.Level;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
 
+import de.redstoneworld.bungeespeak.Configuration.Messages;
+import de.redstoneworld.bungeespeak.util.Replacer;
 import net.md_5.bungee.api.CommandSender;
 
 public class CommandInfo extends BungeeSpeakCommand {
@@ -18,23 +20,22 @@ public class CommandInfo extends BungeeSpeakCommand {
 	public void execute(CommandSender sender, String[] args) {
 		if (!isConnected(sender)) return;
 
+		String header;
 		if (Configuration.MAIN_SERVERPORT.getInt() > 0) {
-			StringBuilder sb = new StringBuilder();
-
-			sb.append("&aTeamspeak IP: &e").append(Configuration.MAIN_IP.getString());
-			sb.append(":").append(Configuration.MAIN_SERVERPORT.getInt());
-
-			send(sender, Level.INFO, sb.toString());
+			header = new Replacer()
+					.addAddress(Configuration.MAIN_IP.getString() + ":" + Configuration.MAIN_SERVERPORT.getInt())
+					.replace(Messages.MC_COMMAND_INFO_HEADER_PORT.get());
 		} else {
-			int port = -Configuration.MAIN_SERVERPORT.getInt();
-			StringBuilder sb = new StringBuilder();
-
-			sb.append("&aTeamspeak IP: &e").append(Configuration.MAIN_IP.getString());
-			sb.append(", Virtual Server ID: ").append(String.valueOf(port));
-
-			send(sender, Level.INFO, sb.toString());
+			header = new Replacer()
+					.addAddress(Configuration.MAIN_IP.getString())
+					.addId(-Configuration.MAIN_SERVERPORT.getInt())
+					.replace(Messages.MC_COMMAND_INFO_HEADER_VIRTUAL.get());
 		}
-		send(sender, Level.INFO, "&aClients online: &e" + BungeeSpeak.getClientList().size());
+		String info = new Replacer()
+				.addCount(BungeeSpeak.getClientList().size())
+				.replace(Messages.MC_COMMAND_INFO_TEXT.get());
+		send(sender, Level.INFO, header);
+		send(sender, Level.INFO, info);
 	}
 
 	@Override

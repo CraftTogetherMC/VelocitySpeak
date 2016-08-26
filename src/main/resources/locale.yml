@@ -81,6 +81,10 @@ MinecraftCommand:
     ToTeamspeakUser: '&l[%player_displayname%&r&l] &r%msg%'
   Info:
     Description: 'Information about the TS server.'
+    Header:
+      Port: '&aTeamspeak IP: &e%address%'
+      Virtual: '&aTeamspeak IP: &e%address%&a, Virtual Server ID: &e%id%'
+    Text: '&aClients online: &e%count%'
   Ban:
     Usage: '/ts ban client (message)'
     Description: 'Bans a client.'

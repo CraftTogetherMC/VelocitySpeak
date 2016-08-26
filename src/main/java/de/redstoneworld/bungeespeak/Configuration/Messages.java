@@ -154,6 +154,15 @@ public enum Messages {
 	MC_COMMAND_INFO_DESCRIPTION("MinecraftCommand.Info.Description",
 			"Information about the TS server."),
 
+	MC_COMMAND_INFO_HEADER_PORT("MinecraftCommand.Info.Header.Port",
+			"&aTeamspeak IP: &e%address%"),
+
+	MC_COMMAND_INFO_HEADER_VIRTUAL("MinecraftCommand.Info.Header.Virtual",
+			"&aTeamspeak IP: &e%address%&a, Virtual Server ID: &e%id%"),
+
+	MC_COMMAND_INFO_TEXT("MinecraftCommand.Info.Text",
+			"&aClients online: &e%count%"),
+
 	MC_COMMAND_BAN_MC("MinecraftCommand.Ban.ToMinecraftServer",
 			"&e%player_displayname% &abanned &e%target% &afor &e%msg%&a."),
 

@@ -83,6 +83,16 @@ public class Replacer {
 		return this;
 	}
 
+	public Replacer addAddress(String address) {
+		repl.put("address", address);
+		return this;
+	}
+
+	public Replacer addId(int id) {
+		repl.put("id", String.valueOf(id));
+		return this;
+	}
+
 	public String replace(String input) {
 		if (input == null) return null;
 
