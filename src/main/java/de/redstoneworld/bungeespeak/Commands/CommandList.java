@@ -32,7 +32,12 @@ public class CommandList extends BungeeSpeakCommand {
 		if (!isConnected(sender)) return;
 
 		if (args.length < 2 || args[1].equalsIgnoreCase("server")) {
-			Collection<HashMap<String, String>> clientCollection = BungeeSpeak.getClientList().getClients().values();
+			Collection<HashMap<String, String>> clientCollection;
+			if (Configuration.MC_COMMANDS_CLIENTLIST_FILTER_LIST.getBoolean()) {
+                clientCollection = BungeeSpeak.getClientList().getFilteredClients().values();
+            } else {
+                clientCollection = BungeeSpeak.getClientList().getClients().values();
+            }
 			List<HashMap<String, String>> clients = new ArrayList<HashMap<String, String>>(clientCollection);
 			Iterator<HashMap<String, String>> iterator = clients.iterator();
 			while (iterator.hasNext()) {
@@ -53,7 +58,12 @@ public class CommandList extends BungeeSpeakCommand {
 				&& args[1].equalsIgnoreCase("channel")) {
 			String id = String.valueOf(BungeeSpeak.getQuery().getCurrentQueryClientChannelID());
 
-			Collection<HashMap<String, String>> clientCollection = BungeeSpeak.getClientList().getClients().values();
+            Collection<HashMap<String, String>> clientCollection;
+            if (Configuration.MC_COMMANDS_CLIENTLIST_FILTER_LIST.getBoolean()) {
+                clientCollection = BungeeSpeak.getClientList().getFilteredClients().values();
+            } else {
+                clientCollection = BungeeSpeak.getClientList().getClients().values();
+            }
 			List<HashMap<String, String>> clients = new ArrayList<HashMap<String, String>>(clientCollection);
 			Iterator<HashMap<String, String>> iterator = clients.iterator();
 			while (iterator.hasNext()) {

@@ -31,8 +31,14 @@ public class CommandInfo extends BungeeSpeakCommand {
 					.addId(-Configuration.MAIN_SERVERPORT.getInt())
 					.replace(Messages.MC_COMMAND_INFO_HEADER_VIRTUAL.get());
 		}
+		int count = 0;
+		if (Configuration.MC_COMMANDS_CLIENTLIST_FILTER_INFO.getBoolean()) {
+			count = BungeeSpeak.getClientList().getFilteredClients().size();
+		} else {
+			count = BungeeSpeak.getClientList().size();
+		}
 		String info = new Replacer()
-				.addCount(BungeeSpeak.getClientList().size())
+				.addCount(count)
 				.replace(Messages.MC_COMMAND_INFO_TEXT.get());
 		send(sender, Level.INFO, header);
 		send(sender, Level.INFO, info);

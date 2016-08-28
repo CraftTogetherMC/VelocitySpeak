@@ -3,10 +3,12 @@ package de.redstoneworld.bungeespeak;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
+import de.redstoneworld.bungeespeak.Configuration.Configuration;
 import de.stefan1200.jts3serverquery.JTS3ServerQuery;
 
 public class ClientList {
@@ -71,6 +73,26 @@ public class ClientList {
 			ret.add(client.get("client_nickname"));
 		}
 		return ret;
+	}
+
+	public ConcurrentHashMap<Integer, HashMap<String, String>> getFilteredClients() {
+		if (Configuration.MC_COMMANDS_CLIENTLIST_FILTER_RULES.getStringList().size() == 0) {
+			return clients;
+		}
+		ConcurrentHashMap<Integer, HashMap<String, String>> filteredClients = new ConcurrentHashMap<Integer, HashMap<String, String>>();
+		for (Map.Entry<Integer, HashMap<String, String>> client : clients.entrySet()) {
+			boolean add = true;
+			for (String rule : Configuration.MC_COMMANDS_CLIENTLIST_FILTER_RULES.getStringList()) {
+				if (client.getValue().get("client_nickname").matches(rule)) {
+					add = false;
+					break;
+				}
+			}
+			if (add) {
+				filteredClients.put(client.getKey(), client.getValue());
+			}
+		}
+		return filteredClients;
 	}
 
 	public ConcurrentHashMap<Integer, HashMap<String, String>> getClients() {

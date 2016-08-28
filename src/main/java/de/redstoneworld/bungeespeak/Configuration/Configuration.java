@@ -2,6 +2,9 @@ package de.redstoneworld.bungeespeak.Configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import de.redstoneworld.bungeespeak.Listeners.ChatListener;
@@ -41,6 +44,10 @@ public enum Configuration {
 	TS_COMMANDS_MESSAGE_BUFFER("teamspeak-commands.MessageBufferDelay", 100),
 	TS_COMMANDS_INTERNAL_LIST("teamspeak-commands.internal.ListCommandEnabled", true),
 	TS_COMMANDS_INTERNAL_PM("teamspeak-commands.internal.PmCommandEnabled", true),
+
+	MC_COMMANDS_CLIENTLIST_FILTER_RULES("minecraft-commands.filteredclientlist.FilterRules", Collections.singletonList("(?i)(.*)bot$")),
+	MC_COMMANDS_CLIENTLIST_FILTER_INFO("minecraft-commands.filteredclientlist.FilterInfo", true),
+	MC_COMMANDS_CLIENTLIST_FILTER_LIST("minecraft-commands.filteredclientlist.FilterList", false),
 
 	PLUGINS_CHAT_RECIPIENTS_MUST_BE_EVERYONE("plugin-interaction.OnlyRelayChatAllPlayersWillReceive", false);
 
@@ -82,6 +89,10 @@ public enum Configuration {
 
 	public String getString() {
 		return config.getString(path, (String) defValue);
+	}
+
+	public List<String> getStringList() {
+		return config.getStringList(path);
 	}
 
 	public int getInt() {

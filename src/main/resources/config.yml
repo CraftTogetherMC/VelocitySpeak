@@ -61,6 +61,20 @@ teamspeak-commands:
     ListCommandEnabled: true
     PmCommandEnabled: true
 
+minecraft-commands:
+  # Settings for filtering the client list
+  filteredclientlist:
+
+    # The rules with which we should filter, use empty list [] to not filter at all
+    FilterRules:
+    - "(?i)(.*)bot$"
+
+    # Enabled filtering in /ts info
+    FilterInfo: true
+
+    # Enable filterin in /ts list
+    FilterList: false
+
 plugin-interaction:
   # Whether only chat events where all online players are the recipients
   # of the message should be sent to the TS server.
