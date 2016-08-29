@@ -110,7 +110,7 @@ public final class PermissionsHelper implements Runnable {
 
 				removedServerGroups.remove(id);
 			} else {
-				Configuration section = permissionsConfig.getSection(id);
+				Configuration section = new Configuration();
 				section.set("name", group.get("name"));
 				section.set("blocked", false);
 				section.set("op", false);
@@ -119,6 +119,7 @@ public final class PermissionsHelper implements Runnable {
 				section.set("plugin-whitelist", Lists.newArrayList("PluginNameFromPluginsCommand"));
 				section.set("command-blacklist", Lists.newArrayList("SomeBlockedCommand"));
 				section.set("inherits", new ArrayList<String>());
+				permissionsConfig.set(id, section);
 
 				serverGroups.put(id, new ServerGroup(group.get("name")));
 				perms.put(id, parseConfigSection(section.getSection("permissions")));
