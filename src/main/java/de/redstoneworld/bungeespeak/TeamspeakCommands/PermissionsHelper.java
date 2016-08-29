@@ -261,7 +261,7 @@ public final class PermissionsHelper implements Runnable {
 	}
 
 	public void reload() throws IOException {
-		BungeeSpeak.log().info("Loading config!");
+		BungeeSpeak.log().info("Loading permissions!");
 		permissionsConfig = new YamlConfig(BungeeSpeak.getInstance(), BungeeSpeak.getInstance().getDataFolder() + File.separator + "permissions.yml");
 	}
 
