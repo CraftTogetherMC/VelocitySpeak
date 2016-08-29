@@ -110,19 +110,17 @@ public final class PermissionsHelper implements Runnable {
 
 				removedServerGroups.remove(id);
 			} else {
-				Configuration section = new Configuration();
-				section.set("name", group.get("name"));
-				section.set("blocked", false);
-				section.set("op", false);
-				section.set("permissions.\"somePlugin.permission\"", true);
-				section.set("permissions.\"OR_plugin.permission\"", true);
-				section.set("plugin-whitelist", Lists.newArrayList("PluginNameFromPluginsCommand"));
-				section.set("command-blacklist", Lists.newArrayList("SomeBlockedCommand"));
-				section.set("inherits", new ArrayList<String>());
-				permissionsConfig.set(id, section);
+				permissionsConfig.set(id + ".name", group.get("name"));
+				permissionsConfig.set(id + ".blocked", false);
+				permissionsConfig.set(id + ".op", false);
+				permissionsConfig.set(id + ".permissions.\"somePlugin.permission\"", true);
+				permissionsConfig.set(id + ".permissions.\"OR_plugin.permission\"", true);
+				permissionsConfig.set(id + ".plugin-whitelist", Lists.newArrayList("PluginNameFromPluginsCommand"));
+				permissionsConfig.set(id + ".command-blacklist", Lists.newArrayList("SomeBlockedCommand"));
+				permissionsConfig.set(id + ".inherits", new ArrayList<String>());
 
 				serverGroups.put(id, new ServerGroup(group.get("name")));
-				perms.put(id, parseConfigSection(section.getSection("permissions")));
+				perms.put(id, parseConfigSection(permissionsConfig.getSection(id + ".permissions")));
 			}
 		}
 
