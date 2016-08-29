@@ -2,8 +2,8 @@ name: BungeeSpeak
 version: '${project.version}-b${BUILD_NUMBER}'
 description: 'This plugin will display Teamspeak 3 server joins, quits and messages in Minecraft.'
 main: de.redstoneworld.bungeespeak.BungeeSpeak
-author: 'Firedroide'
-authors: [but2002, greycap, deathmarine, Phoenix616]
+author: 'Phoenix616'
+authors: [but2002, greycap, deathmarine, Firedroide]
 website: 'https://github.com/RedstoneWorld/BungeeSpeak'
 commands:
   ts:
