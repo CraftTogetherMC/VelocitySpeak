@@ -113,8 +113,8 @@ public final class PermissionsHelper implements Runnable {
 				permissionsConfig.set(id + ".name", group.get("name"));
 				permissionsConfig.set(id + ".blocked", false);
 				permissionsConfig.set(id + ".op", false);
-				permissionsConfig.set(id + ".permissions.\"somePlugin.permission\"", true);
-				permissionsConfig.set(id + ".permissions.\"OR_plugin.permission\"", true);
+				permissionsConfig.set(id + ".permissions.somePlugin/permission", true);
+				permissionsConfig.set(id + ".permissions.OR_plugin/permission", true);
 				permissionsConfig.set(id + ".plugin-whitelist", Lists.newArrayList("PluginNameFromPluginsCommand"));
 				permissionsConfig.set(id + ".command-blacklist", Lists.newArrayList("SomeBlockedCommand"));
 				permissionsConfig.set(id + ".inherits", new ArrayList<String>());
