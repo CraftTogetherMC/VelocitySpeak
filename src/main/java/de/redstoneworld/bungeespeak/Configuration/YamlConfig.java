@@ -53,6 +53,10 @@ public class YamlConfig {
      * save configuration to disk
      */
     public void save() {
+        if (cfg == null) {
+            plugin.getLogger().warning("Configuration is empty. Nothing to save to " + configFile.getAbsolutePath());
+            return;
+        }
         try {
             ymlCfg.save(cfg, configFile);
         } catch (IOException e) {
