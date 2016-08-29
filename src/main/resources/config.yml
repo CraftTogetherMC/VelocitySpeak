@@ -8,7 +8,10 @@ main:
 teamspeak:
   TeamspeakNickname: Minecraft
   ConsoleName: '&4Server'
-  
+
+  # Minutes between checking if the ts connection is still valid
+  KeepAlive: 20
+
   # Only required if you use the channel functions!
   ChannelID: 0
   ChannelPassword: ''

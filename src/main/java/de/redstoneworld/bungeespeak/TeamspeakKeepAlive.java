@@ -2,7 +2,7 @@ package de.redstoneworld.bungeespeak;
 
 import java.util.Date;
 
-public class TeamspeakKeepAlive extends Thread {
+public class TeamspeakKeepAlive implements Runnable {
 
 	private static final int MAX_STEPS = 6;
 	private static final int MAX_WAIT = 60;
