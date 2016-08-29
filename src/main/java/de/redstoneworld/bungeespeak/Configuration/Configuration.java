@@ -118,7 +118,7 @@ public enum Configuration {
 			p = ChatListener.Priority.valueOf(getString().toUpperCase());
 			return p;
 		} catch (IllegalArgumentException e) {
-			BungeeSpeak.log().warning("Config value \"" + path + "\" did not match LOWEST, LOW, NORMAL, HIGH, HIGHEST or MONITOR!");
+			BungeeSpeak.log().warning("Config value \"" + path + "\" did not match LOWEST, LOW, NORMAL, HIGH or HIGHEST!");
 		}
 		return ChatListener.Priority.NORMAL;
 	}
