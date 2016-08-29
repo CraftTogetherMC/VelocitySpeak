@@ -114,8 +114,8 @@ public final class PermissionsHelper implements Runnable {
 				section.set("name", group.get("name"));
 				section.set("blocked", false);
 				section.set("op", false);
-				section.set("permissions.somePlugin.permission", true);
-				section.set("permissions.OR_plugin.permission", true);
+				section.set("permissions.\"somePlugin.permission\"", true);
+				section.set("permissions.\"OR_plugin.permission\"", true);
 				section.set("plugin-whitelist", Lists.newArrayList("PluginNameFromPluginsCommand"));
 				section.set("command-blacklist", Lists.newArrayList("SomeBlockedCommand"));
 				section.set("inherits", new ArrayList<String>());
