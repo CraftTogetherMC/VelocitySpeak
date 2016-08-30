@@ -25,7 +25,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class BungeeSpeak extends Plugin {
 	private boolean enabled = false;
 
-	private static final int KEEP_ALIVE_DELAY = 1200;
+	private static final int KEEP_ALIVE_DELAY = 60;
 
 	private static BungeeSpeak instance;
 	private static TeamspeakCommandExecutor tsCommand;
