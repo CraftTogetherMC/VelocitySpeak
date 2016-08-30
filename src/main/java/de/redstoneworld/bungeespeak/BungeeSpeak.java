@@ -21,10 +21,11 @@ import de.stefan1200.jts3serverquery.*;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 public class BungeeSpeak extends Plugin {
 	private boolean enabled = false;
+
+	private static final int KEEP_ALIVE_DELAY = 1200;
 
 	private static BungeeSpeak instance;
 	private static TeamspeakCommandExecutor tsCommand;
@@ -47,7 +48,6 @@ public class BungeeSpeak extends Plugin {
 	private Logger logger;
 
 	private Date started, stopped, laststarted, laststopped;
-	private ScheduledTask tsKeepAliveThread;
 
 	public static BungeeSpeak getInstance() {
 		return instance;
@@ -83,7 +83,7 @@ public class BungeeSpeak extends Plugin {
 		qc = new QueryConnector();
 		getProxy().getScheduler().runAsync(this, qc);
 		tsKeepAlive = new TeamspeakKeepAlive(this);
-		tsKeepAliveThread = getProxy().getScheduler().schedule(this, tsKeepAlive, Configuration.TS_KEEP_ALIVE.getInt() / 2, Configuration.TS_KEEP_ALIVE.getInt(), TimeUnit.MINUTES);
+		getProxy().getScheduler().schedule(this, tsKeepAlive, KEEP_ALIVE_DELAY / 2, KEEP_ALIVE_DELAY, TimeUnit.SECONDS);
 
 		mcTsCommand = new TsCommandExecutor();
 		mcTsaCommand = new TsaCommandExecutor();
@@ -266,10 +266,6 @@ public class BungeeSpeak extends Plugin {
 
 			qc = new QueryConnector();
 			getProxy().getScheduler().runAsync(this, qc);
-
-			tsKeepAlive = new TeamspeakKeepAlive(this);
-			getProxy().getScheduler().cancel(tsKeepAliveThread);
-			tsKeepAliveThread = getProxy().getScheduler().schedule(this, tsKeepAlive, Configuration.TS_KEEP_ALIVE.getInt() / 2, Configuration.TS_KEEP_ALIVE.getInt(), TimeUnit.MINUTES);
 
 			this.getLogger().info("reloaded.");
 			return true;
