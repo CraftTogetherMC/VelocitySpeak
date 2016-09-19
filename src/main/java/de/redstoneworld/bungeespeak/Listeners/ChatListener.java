@@ -53,6 +53,7 @@ public class ChatListener implements Listener {
 		if (!BungeeSpeak.getInstance().isEnabled()) return;
 		if (Configuration.TS_MESSAGES_TARGET.getTeamspeakTarget() == TsTarget.NONE) return;
 		if (e.getSender() == null || !(e.getSender() instanceof ProxiedPlayer) || e.getMessage().isEmpty()) return;
+		if (e.getMessage().startsWith("/")) return;
 
 		/* If all players on the server will receive this message, it should be considered safe to relay */
 		/* TODO: Find good implementation on Bungee
