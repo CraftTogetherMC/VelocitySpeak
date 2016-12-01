@@ -60,7 +60,7 @@ public final class MessageUtil {
 	public static String getFormatString(String input) {
 		String s = input.replaceAll("(&|$)([a-fk-orA-FK-OR0-9])", ChatColor.COLOR_CHAR + "$2");
 		Deque<FormatString> deque = new LinkedList<FormatString>();
-		Matcher m = Pattern.compile("\u00A7[a-fk-orA-FK-OR0-9]").matcher(s);
+		Matcher m = ChatColor.STRIP_COLOR_PATTERN.matcher(s);
 
 		while (m.find()) {
 			FormatString format = FormatString.fromChar(s.charAt(m.start() + 1));
@@ -77,6 +77,15 @@ public final class MessageUtil {
 			result.append(reverse.next().getMinecraftFormatString());
 		}
 		return result.toString();
+	}
+
+	public static String getSecondaryFormatString(String input) {
+		String mainColor = getFormatString(input);
+		String s = input.replaceAll("(&|$)([a-fk-orA-FK-OR0-9])", ChatColor.COLOR_CHAR + "$2");
+		s = s.replace(mainColor, "");
+
+		String secondaryColor = getFormatString(s);
+		return secondaryColor.isEmpty() ? mainColor : secondaryColor;
 	}
 
 	public static String toMinecraft(String input, boolean color, boolean links) {

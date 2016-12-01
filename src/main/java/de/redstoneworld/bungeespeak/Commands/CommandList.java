@@ -48,8 +48,9 @@ public class CommandList extends BungeeSpeakCommand {
 			}
 
 			String mcMsg = Messages.MC_COMMAND_LIST_SERVER.get();
-			String color = MessageUtil.getFormatString(mcMsg);
-			String userList = createClientList(clients, Configuration.TS_LIST_GROUPING.getBoolean(), color);
+			String mainColor = MessageUtil.getFormatString(mcMsg);
+			String secondaryColor = MessageUtil.getSecondaryFormatString(mcMsg);
+			String userList = createClientList(clients, Configuration.TS_LIST_GROUPING.getBoolean(), mainColor, secondaryColor);
 			mcMsg = new Replacer().addSender(sender).addList(userList).addCount(clients.size()).replace(mcMsg);
 
 			if (mcMsg == null || mcMsg.isEmpty()) return;
@@ -74,8 +75,9 @@ public class CommandList extends BungeeSpeakCommand {
 			}
 
 			String mcMsg = Messages.MC_COMMAND_LIST_CHANNEL.get();
-			String cc = MessageUtil.getFormatString(mcMsg);
-			String userList = createClientList(clients, Configuration.TS_LIST_GROUPING.getBoolean(), cc);
+			String mainColor = MessageUtil.getFormatString(mcMsg);
+			String secondaryColor = MessageUtil.getSecondaryFormatString(mcMsg);
+			String userList = createClientList(clients, Configuration.TS_LIST_GROUPING.getBoolean(), mainColor, secondaryColor);
 			mcMsg = new Replacer().addSender(sender).addList(userList).addCount(clients.size()).replace(mcMsg);
 
 			if (mcMsg == null || mcMsg.isEmpty()) return;
@@ -87,7 +89,7 @@ public class CommandList extends BungeeSpeakCommand {
 		}
 	}
 
-	private static String createClientList(Collection<HashMap<String, String>> map, boolean grouping, String color) {
+	private static String createClientList(Collection<HashMap<String, String>> map, boolean grouping, String mainColor, String secondaryColor) {
 		if (map.isEmpty()) return "-";
 
 		if (grouping) {
@@ -117,10 +119,10 @@ public class CommandList extends BungeeSpeakCommand {
 			// Stringify
 			StringBuilder output = new StringBuilder("\n");
 			for (Entry<String, List<HashMap<String, String>>> entry : groups.entrySet()) {
-				output.append("&r&a").append(entry.getKey()).append(": ");
+				output.append("&r").append(secondaryColor).append(entry.getKey()).append(": ");
 				for (HashMap<String, String> user : entry.getValue()) {
-					output.append(color).append(user.get("client_nickname"));
-					output.append("&r&a").append(", ");
+					output.append(mainColor).append(user.get("client_nickname"));
+					output.append("&r").append(secondaryColor).append(", ");
 				}
 				output.setLength(output.length() - 6);
 				output.append("\n");
@@ -131,8 +133,8 @@ public class CommandList extends BungeeSpeakCommand {
 			StringBuilder list = new StringBuilder();
 			for (HashMap<String, String> user : BungeeSpeak.getClientList().getClients().values()) {
 				if (user.get("client_type").equals("0")) {
-					list.append(color).append(user.get("client_nickname"));
-					list.append("&r&a").append(", ");
+					list.append(mainColor).append(user.get("client_nickname"));
+					list.append("&r").append(secondaryColor).append(", ");
 				}
 			}
 
