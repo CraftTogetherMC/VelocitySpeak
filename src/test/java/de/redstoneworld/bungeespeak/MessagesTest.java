@@ -52,8 +52,6 @@ public class MessagesTest {
 				fail(m.name() + "(" + m.getConfigPath() + ") did not have a default value assigned.");
 			} else if (!m.getDefaultValue().equals(defaults.get(m.getConfigPath()))) {
 				fail(m.name() + "(" + m.getConfigPath() + ") default values did not match.");
-			} else if (m.getDefaultValue() instanceof String && String.valueOf(m.getDefaultValue()).isEmpty()) {
-				fail(m.name() + "(" + m.getConfigPath() + ") had an empty String as default value assigned.");
 			}
 		}
 	}
