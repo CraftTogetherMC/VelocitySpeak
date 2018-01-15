@@ -39,6 +39,7 @@ public class CommandHelp extends BungeeSpeakCommand {
 					Messages.MC_COMMAND_HELP_ADMIN_DESCRIPTION.get()).replace(help);
 			send(sender, Level.INFO, help);
 		}
+		send(sender, Level.INFO, Messages.MC_COMMAND_HELP_USER_FOOTER.get());
 	}
 
 	private void sendUserCommandHelp(CommandSender sender, String command, String description) {

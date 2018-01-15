@@ -22,6 +22,7 @@ public class CommandAdminHelp extends BungeeSpeakCommand {
 		sendAdminCommandHelp(sender, "set", Messages.MC_COMMAND_SET_DESCRIPTION.get());
 		sendAdminCommandHelp(sender, "status", Messages.MC_COMMAND_STATUS_DESCRIPTION.get());
 		sendAdminCommandHelp(sender, "reload", Messages.MC_COMMAND_RELOAD_DESCRIPTION.get());
+		send(sender, Level.INFO, Messages.MC_COMMAND_HELP_ADMIN_FOOTER.get());
 	}
 
 	private void sendAdminCommandHelp(CommandSender sender, String command, String description) {

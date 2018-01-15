@@ -35,11 +35,13 @@ MinecraftCommand:
   Help:
     UserCommands:
       Header: '&aHelp'
+      Footer: ''
       ToMinecraftUser: '&e%command% &a- %description%'
     AdminCommands:
       Command: '/ts admin &aor &e/tsa'
       Description: 'BungeeSpeak admin commands.'
       Header: '&2Admin Commands Help'
+      Footer: ''
       ToMinecraftUser: '&e%command% &2- %description%'
   List:
     Description: 'Displays who''s currently on TeamSpeak.'

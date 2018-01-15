@@ -60,12 +60,18 @@ public enum Messages {
 
 	MC_COMMAND_HELP_USER_HEADER("MinecraftCommand.Help.UserCommands.Header",
 			"&aHelp"),
+    
+    MC_COMMAND_HELP_USER_FOOTER("MinecraftCommand.Help.UserCommands.Footer",
+            ""),
 
 	MC_COMMAND_HELP_ADMIN("MinecraftCommand.Help.AdminCommands.ToMinecraftUser",
 			"&e%command% &2- %description%"),
 
 	MC_COMMAND_HELP_ADMIN_HEADER("MinecraftCommand.Help.AdminCommands.Header",
 			"&2Admin Commands Help"),
+    
+    MC_COMMAND_HELP_ADMIN_FOOTER("MinecraftCommand.Help.AdminCommands.Footer",
+            ""),
 
 	MC_COMMAND_HELP_ADMIN_DESCRIPTION("MinecraftCommand.Help.AdminCommands.Description",
 			"BungeeSpeak admin commands."),
