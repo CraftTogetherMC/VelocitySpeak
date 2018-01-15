@@ -6,7 +6,6 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class MessageUtil {
 
@@ -18,14 +17,13 @@ public final class MessageUtil {
 	public static String toTeamspeak(String input, boolean color, boolean links) {
 		if (input == null) return null;
 
-		String s = input;
+		String s = ChatColor.translateAlternateColorCodes('&', input);
 		if (color) {
-			s = s.replaceAll("(&|$)([a-fk-orA-FK-OR0-9])", ChatColor.COLOR_CHAR + "$2");
 			s = s.replaceAll("\\[", "\\\\[");
 
 			StringBuilder out = new StringBuilder();
 			Deque<FormatString> deque = new LinkedList<FormatString>();
-			Matcher m = Pattern.compile("\u00A7[a-fk-orA-FK-OR0-9]").matcher(s);
+			Matcher m = ChatColor.STRIP_COLOR_PATTERN.matcher(s);
 
 			int previousIndex = 0;
 			while (m.find()) {
@@ -45,7 +43,7 @@ public final class MessageUtil {
 			out.append(resetStack(deque));
 			s = out.toString();
 		} else {
-			s = s.replaceAll("(&|$|\u00A7)[a-fk-orA-FK-OR0-9]", "");
+			s = ChatColor.stripColor(s);
 		}
 
 		if (links) {
@@ -58,7 +56,7 @@ public final class MessageUtil {
 	}
 
 	public static String getFormatString(String input) {
-		String s = input.replaceAll("(&|$)([a-fk-orA-FK-OR0-9])", ChatColor.COLOR_CHAR + "$2");
+		String s = ChatColor.translateAlternateColorCodes('&', input);
 		Deque<FormatString> deque = new LinkedList<FormatString>();
 		Matcher m = ChatColor.STRIP_COLOR_PATTERN.matcher(s);
 
@@ -81,7 +79,7 @@ public final class MessageUtil {
 
 	public static String getSecondaryFormatString(String input) {
 		String mainColor = getFormatString(input);
-		String s = input.replaceAll("(&|$)([a-fk-orA-FK-OR0-9])", ChatColor.COLOR_CHAR + "$2");
+		String s = ChatColor.translateAlternateColorCodes('&', input);
 		s = s.replace(mainColor, "");
 
 		String secondaryColor = getFormatString(s);
@@ -90,11 +88,9 @@ public final class MessageUtil {
 
 	public static String toMinecraft(String input, boolean color, boolean links) {
 		if (input != null) {
-			String s = input;
-			if (color) {
-				s = s.replaceAll("(&|$)([a-fk-orA-FK-OR0-9])", ChatColor.COLOR_CHAR + "$2");
-			} else {
-				s = s.replaceAll("((&|$|\u00A7)([a-fk-orA-FK-OR0-9]))", "");
+			String s = ChatColor.translateAlternateColorCodes('&', input);
+			if (!color) {
+				s = ChatColor.stripColor(s);
 			}
 			if (links) {
 				s = s.replaceAll("(?i)\\[URL]([\\S\\n]+)\\[/URL]", "$1");

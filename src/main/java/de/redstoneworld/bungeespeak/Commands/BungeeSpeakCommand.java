@@ -7,8 +7,10 @@ import java.util.logging.Level;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
 import de.redstoneworld.bungeespeak.Configuration.Messages;
+import de.redstoneworld.bungeespeak.TeamspeakCommands.TeamspeakCommandSender;
 import de.redstoneworld.bungeespeak.util.Replacer;
 import de.redstoneworld.bungeespeak.util.MessageUtil;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -34,13 +36,13 @@ public abstract class BungeeSpeakCommand {
 	}
 
 	protected void send(CommandSender sender, Level level, String msg) {
-		String m = msg;
-		if (sender instanceof ProxiedPlayer) {
-			m = m.replaceAll("((&|$)([a-fk-orA-FK-OR0-9]))", "\u00A7$3");
-			sender.sendMessage(BungeeSpeak.getFullName() + m);
+		if (msg.isEmpty()) {
+			return;
+		}
+		if (sender instanceof ProxiedPlayer || sender instanceof TeamspeakCommandSender) {
+			sender.sendMessage(BungeeSpeak.getFullName() + ChatColor.translateAlternateColorCodes('&', msg));
 		} else {
-			m = (BungeeSpeak.getFullName() + m).replaceAll("((&|$|\u00A7)([a-fk-orA-FK-OR0-9]))", "");
-			sender.sendMessage(m);
+			BungeeSpeak.getInstance().getLogger().log(level, ChatColor.translateAlternateColorCodes('&', msg));
 		}
 	}
 
