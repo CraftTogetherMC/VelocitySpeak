@@ -17,7 +17,7 @@ public class CommandHelp extends BungeeSpeakCommand {
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		send(sender, Level.INFO, Messages.MC_COMMAND_HELP_USER_HEADER.get());
+		send(sender, Level.INFO, false, Messages.MC_COMMAND_HELP_USER_HEADER.get());
 		sendUserCommandHelp(sender, "list", Messages.MC_COMMAND_LIST_DESCRIPTION.get());
 		sendUserCommandHelp(sender, "mute", Messages.MC_COMMAND_MUTE_DESCRIPTION.get());
 		if (Configuration.TS_ENABLE_SERVER_MESSAGES.getBoolean()) {
@@ -37,9 +37,9 @@ public class CommandHelp extends BungeeSpeakCommand {
 			String help = Messages.MC_COMMAND_HELP_ADMIN.get();
 			help = new Replacer().addCommandDescription(Messages.MC_COMMAND_HELP_ADMIN_COMMAND.get(),
 					Messages.MC_COMMAND_HELP_ADMIN_DESCRIPTION.get()).replace(help);
-			send(sender, Level.INFO, help);
+			send(sender, Level.INFO, false, help);
 		}
-		send(sender, Level.INFO, Messages.MC_COMMAND_HELP_USER_FOOTER.get());
+		send(sender, Level.INFO, false, Messages.MC_COMMAND_HELP_USER_FOOTER.get());
 	}
 
 	private void sendUserCommandHelp(CommandSender sender, String command, String description) {
@@ -50,7 +50,7 @@ public class CommandHelp extends BungeeSpeakCommand {
 		if (!checkCommandPermission(sender, permission)) return;
 		String help = Messages.MC_COMMAND_HELP_USER.get();
 		help = new Replacer().addCommandDescription("/ts " + command, description).replace(help);
-		send(sender, Level.INFO, help);
+		send(sender, Level.INFO, false, help);
 	}
 
 	@Override

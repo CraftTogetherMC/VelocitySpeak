@@ -36,11 +36,15 @@ public abstract class BungeeSpeakCommand {
 	}
 
 	protected void send(CommandSender sender, Level level, String msg) {
+		send(sender, level, true, msg);
+	}
+	
+	protected void send(CommandSender sender, Level level, boolean prefix, String msg) {
 		if (msg.isEmpty()) {
 			return;
 		}
 		if (sender instanceof ProxiedPlayer || sender instanceof TeamspeakCommandSender) {
-			sender.sendMessage(BungeeSpeak.getFullName() + ChatColor.translateAlternateColorCodes('&', msg));
+			sender.sendMessage((prefix ? BungeeSpeak.getFullName() : "") + ChatColor.translateAlternateColorCodes('&', msg));
 		} else {
 			BungeeSpeak.getInstance().getLogger().log(level, ChatColor.translateAlternateColorCodes('&', msg));
 		}
