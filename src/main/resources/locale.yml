@@ -32,15 +32,18 @@ MinecraftEvent:
   PlayerBanned:
     ToTeamspeakTarget: '&l%player_displayname%&r was banned from the server.'
 MinecraftCommand:
+  Usage:
+    Ts: 'Type /ts for help.'
+    Tsa: 'Type /tsa for help.'
   Help:
     UserCommands:
-      Header: '&aHelp'
+      Header: '&a[&6BungeeSpeak&a] &aHelp'
       Footer: ''
       ToMinecraftUser: '&e%command% &a- %description%'
     AdminCommands:
       Command: '/ts admin &aor &e/tsa'
       Description: 'BungeeSpeak admin commands.'
-      Header: '&2Admin Commands Help'
+      Header: '&a[&6BungeeSpeak&a] &2Admin Commands Help'
       Footer: ''
       ToMinecraftUser: '&e%command% &2- %description%'
   List:

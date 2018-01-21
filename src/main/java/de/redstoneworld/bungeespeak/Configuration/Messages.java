@@ -55,6 +55,12 @@ public enum Messages {
 			"&l%player_displayname%&r was banned from the server."),
 
 	// Minecraft commands
+	MC_COMMAND_USAGE_TS("MinecraftCommand.Usage.Ts",
+			"Type /ts for help."),
+	
+	MC_COMMAND_USAGE_TSA("MinecraftCommand.Usage.Tsa",
+			"Type /tsa for help."),
+	
 	MC_COMMAND_HELP_USER("MinecraftCommand.Help.UserCommands.ToMinecraftUser",
 			"&e%command% &a- %description%"),
 

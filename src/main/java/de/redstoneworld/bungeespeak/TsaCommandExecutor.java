@@ -13,8 +13,10 @@ import de.redstoneworld.bungeespeak.Commands.CommandReload;
 import de.redstoneworld.bungeespeak.Commands.CommandSet;
 import de.redstoneworld.bungeespeak.Commands.CommandStatus;
 
+import de.redstoneworld.bungeespeak.Configuration.Messages;
+import de.redstoneworld.bungeespeak.TeamspeakCommands.TeamspeakCommandSender;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -38,18 +40,22 @@ public class TsaCommandExecutor extends Command implements TabExecutor {
 	@Override
 	public void execute(CommandSender sender, String[] args) {
 		if (!onTeamspeakAdminCommand(sender, args)) {
-			sender.sendMessage(TextComponent.fromLegacyText("Type /" + getName() + " for help."));
+			send(sender, Level.WARNING, Messages.MC_COMMAND_USAGE_TSA.get());
 		}
 	}
-
+	
 	public void send(CommandSender sender, Level level, String msg) {
-		String m = msg;
-		if (sender instanceof ProxiedPlayer) {
-			m = m.replaceAll("&", "\u00A7").replaceAll("$", "\u00A7");
-			sender.sendMessage(BungeeSpeak.getFullName() + m);
+		send(sender, level, true, msg);
+	}
+	
+	public void send(CommandSender sender, Level level, boolean prefix, String msg) {
+		if (msg.isEmpty()) {
+			return;
+		}
+		if (sender instanceof ProxiedPlayer || sender instanceof TeamspeakCommandSender) {
+			sender.sendMessage((prefix ? BungeeSpeak.getFullName() : "") + ChatColor.translateAlternateColorCodes('&', msg));
 		} else {
-			m = m.replaceAll("&[a-fA-F0-9]", "").replaceAll("$[a-fA-F0-9]", "");
-			BungeeSpeak.log().log(level, m);
+			BungeeSpeak.getInstance().getLogger().log(level, ChatColor.translateAlternateColorCodes('&', msg));
 		}
 	}
 
