@@ -26,7 +26,7 @@ public class TsaCommandExecutor extends Command implements TabExecutor {
 	private List<BungeeSpeakCommand> adminCommands;
 
 	public TsaCommandExecutor() {
-		super("tsa");
+		super("bungeespeakadmin", null, "tsa");
 		adminCommands = new ArrayList<BungeeSpeakCommand>();
 		adminCommands.add(new CommandAdminHelp());
 		adminCommands.add(new CommandBan());

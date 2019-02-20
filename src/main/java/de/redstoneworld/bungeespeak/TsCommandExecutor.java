@@ -29,7 +29,7 @@ public class TsCommandExecutor extends Command implements TabExecutor {
 	private List<BungeeSpeakCommand> userCommands;
 
 	public TsCommandExecutor() {
-		super("ts");
+		super("bungeespeak", null, "ts");
 		userCommands = new ArrayList<BungeeSpeakCommand>();
 		userCommands.add(new CommandHelp());
 		userCommands.add(new CommandInfo());

@@ -6,11 +6,13 @@ author: 'Phoenix616'
 authors: [but2002, greycap, deathmarine, Firedroide]
 website: 'https://github.com/RedstoneWorld/BungeeSpeak'
 commands:
-  ts:
+  bungeespeak:
     description: BungeeSpeak commands
+    aliases: [ts]
     usage: Type /ts for help.
-  tsa:
+  bungeespeakadmin:
     description: BungeeSpeak admin commands
+    aliases: [tsa]
     usage: Type /tsa for help.
 permissions:
   bungeespeak.*:
