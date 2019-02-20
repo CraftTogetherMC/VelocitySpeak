@@ -65,7 +65,7 @@ public enum Messages {
 			"&e%command% &a- %description%"),
 
 	MC_COMMAND_HELP_USER_HEADER("MinecraftCommand.Help.UserCommands.Header",
-			"&aHelp"),
+			"&a[&6BungeeSpeak&a] &aHelp"),
     
     MC_COMMAND_HELP_USER_FOOTER("MinecraftCommand.Help.UserCommands.Footer",
             ""),
@@ -74,7 +74,7 @@ public enum Messages {
 			"&e%command% &2- %description%"),
 
 	MC_COMMAND_HELP_ADMIN_HEADER("MinecraftCommand.Help.AdminCommands.Header",
-			"&2Admin Commands Help"),
+			"&a[&6BungeeSpeak&a] &2Admin Commands Help"),
     
     MC_COMMAND_HELP_ADMIN_FOOTER("MinecraftCommand.Help.AdminCommands.Footer",
             ""),
