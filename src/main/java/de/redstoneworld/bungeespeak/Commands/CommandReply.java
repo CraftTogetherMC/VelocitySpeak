@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
 import de.redstoneworld.bungeespeak.Configuration.Messages;
@@ -14,8 +15,6 @@ import de.redstoneworld.bungeespeak.AsyncQueryUtils.QuerySender;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-
-import de.stefan1200.jts3serverquery.JTS3ServerQuery;
 
 public class CommandReply extends BungeeSpeakCommand {
 
@@ -57,13 +56,13 @@ public class CommandReply extends BungeeSpeakCommand {
 		String tsMsg = Messages.MC_COMMAND_PM_TS.get();
 		String mcMsg = Messages.MC_COMMAND_PM_MC.get();
 
-		Replacer r = new Replacer().addSender(sender).addTargetClient(BungeeSpeak.getClientList().get(clid));
+		Replacer r = new Replacer().addSender(sender).addTargetClient(BungeeSpeak.getClientList().get(clid).getMap());
 		r.addMessage(sb.toString());
 		tsMsg = MessageUtil.toTeamspeak(r.replace(tsMsg), true, Configuration.TS_ALLOW_LINKS.getBoolean());
 		mcMsg = r.replace(mcMsg);
 
 		if (tsMsg == null || tsMsg.isEmpty()) return;
-		QuerySender qs = new QuerySender(clid, JTS3ServerQuery.TEXTMESSAGE_TARGET_CLIENT, tsMsg);
+		QuerySender qs = new QuerySender(clid, TextMessageTargetMode.CLIENT, tsMsg);
 		BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qs);
 		if (mcMsg == null || mcMsg.isEmpty()) return;
 		if (sender instanceof ProxiedPlayer) {

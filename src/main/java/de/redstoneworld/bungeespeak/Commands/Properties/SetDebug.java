@@ -35,12 +35,12 @@ public class SetDebug extends SetProperty {
 	public boolean execute(CommandSender sender, String arg) {
 		if (arg.equalsIgnoreCase("true")) {
 			PROPERTY.set(true);
-			BungeeSpeak.getQuery().DEBUG = true;
 			send(sender, Level.INFO, "&aDebug mode was successfully enabled.");
+			BungeeSpeak.getInstance().reload();
 		} else if (arg.equalsIgnoreCase("false")) {
 			PROPERTY.set(false);
-			BungeeSpeak.getQuery().DEBUG = false;
 			send(sender, Level.INFO, "&aDebug mode was successfully disabled.");
+			BungeeSpeak.getInstance().reload();
 		} else {
 			send(sender, Level.WARNING, "&4Only 'true' or 'false' are accepted.");
 			return false;

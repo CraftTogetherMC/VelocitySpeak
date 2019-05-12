@@ -1,5 +1,6 @@
 package de.redstoneworld.bungeespeak.AsyncQueryUtils;
 
+import com.github.theholywaffle.teamspeak3.api.exception.TS3CommandFailedException;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 
 public class QueryKick implements Runnable {
@@ -16,6 +17,16 @@ public class QueryKick implements Runnable {
 
 	@Override
 	public void run() {
-		BungeeSpeak.getQuery().kickClient(id, local, reason);
+		try {
+			if (local) {
+				BungeeSpeak.getQuery().getApi().kickClientFromChannel(reason, id);
+			} else {
+				BungeeSpeak.getQuery().getApi().kickClientFromServer(reason, id);
+			}
+		} catch (TS3CommandFailedException ex) {
+			BungeeSpeak.log().info("kickClient()" + ex.getError().getId() + ex.getError().getMessage() + ex.getError().getExtraMessage() + ex.getError().getFailedPermissionId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

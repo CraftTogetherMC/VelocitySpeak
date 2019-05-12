@@ -1,35 +1,49 @@
 package de.redstoneworld.bungeespeak.teamspeakEvent;
 
-import java.util.HashMap;
 import java.util.regex.Pattern;
 
+import com.github.theholywaffle.teamspeak3.api.event.*;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
-import de.stefan1200.jts3serverquery.TeamspeakActionListener;
 
-public class TeamspeakListener implements TeamspeakActionListener {
+public class TeamspeakListener extends TS3EventAdapter {
 
 	@Override
-	public void teamspeakActionPerformed(String eventType, HashMap<String, String> eventInfo) {
+	public void onClientJoin(ClientJoinEvent event) {
+		if (event.getClientType() != 0 || event.getClientNickname().startsWith("Unknown from")) return;
+		new EnterEvent(event.getMap());
+	}
 
-		if (eventType.equals("notifycliententerview")) {
-			if (eventInfo == null || !eventInfo.get("client_type").equals("0")
-					|| eventInfo.get("client_nickname").startsWith("Unknown from")) return;
-			new EnterEvent(eventInfo);
-		} else if (eventType.equals("notifyclientleftview")) {
-			if (!BungeeSpeak.getClientList().containsID(Integer.parseInt(eventInfo.get("clid")))) return;
-			new LeaveEvent(eventInfo);
-		} else if (eventType.equals("notifytextmessage")) {
-			String message = eventInfo.get("msg");
+	@Override
+	public void onClientLeave(ClientLeaveEvent event) {
+		if (!BungeeSpeak.getClientList().containsID(event.getClientId())) return;
+		new LeaveEvent(event.getMap());
+	}
 
-			String reg = Pattern.quote(Configuration.TS_COMMANDS_PREFIX.getString());
-			if (Configuration.TS_COMMANDS_ENABLED.getBoolean() && message.matches(reg + "\\S.*")) {
-				new TeamspeakCommandEvent(eventInfo);
-			} else {
-				new ServerMessageEvent(eventInfo);
-			}
-		} else if (eventType.equals("notifyclientmoved")) {
-			new ClientMovedEvent(eventInfo);
+	@Override
+	public void onTextMessage(TextMessageEvent e) {
+		String message = e.getMessage();
+
+		String reg = Pattern.quote(Configuration.TS_COMMANDS_PREFIX.getString());
+		if (Configuration.TS_COMMANDS_ENABLED.getBoolean() && message.matches(reg + "\\S.*")) {
+			new TeamspeakCommandEvent(e.getMap());
+		} else {
+			new ServerMessageEvent(e.getMap());
+		}
+	}
+
+	@Override
+	public void onClientMoved(com.github.theholywaffle.teamspeak3.api.event.ClientMovedEvent e) {
+		if (e.getClientId() == BungeeSpeak.getQueryInfo().getId()) {
+			BungeeSpeak.updateQueryInfo();
+		}
+		new ClientMovedEvent(e.getMap());
+	}
+
+	@Override
+	public void onChannelDeleted(ChannelDeletedEvent event) {
+		if (event.getChannelId() == BungeeSpeak.getQueryInfo().getChannelId()) {
+			BungeeSpeak.updateQueryInfo();
 		}
 	}
 }

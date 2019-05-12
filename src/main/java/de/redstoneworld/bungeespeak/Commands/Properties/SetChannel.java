@@ -1,10 +1,11 @@
 package de.redstoneworld.bungeespeak.Commands.Properties;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.github.theholywaffle.teamspeak3.api.exception.TS3CommandFailedException;
+import com.github.theholywaffle.teamspeak3.api.wrapper.ChannelBase;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
 
@@ -45,7 +46,7 @@ public class SetChannel extends SetProperty {
 			return false;
 		}
 
-		HashMap<String, String> channel;
+		ChannelBase channel;
 		try {
 			channel = BungeeSpeak.getChannelList().getByPartialName(arg);
 		} catch (IllegalArgumentException e) {
@@ -64,19 +65,19 @@ public class SetChannel extends SetProperty {
 			return false;
 		}
 
-		int clid = BungeeSpeak.getQuery().getCurrentQueryClientID();
 		String pw = Configuration.TS_CHANNEL_PASSWORD.getString();
 
-		if (BungeeSpeak.getQuery().moveClient(clid, cid, pw)) {
+		try {
+			BungeeSpeak.getQuery().getApi().moveQuery(cid, pw);
 			Configuration.TS_CHANNEL_ID.set(cid);
 			Configuration.save();
 			reloadListener();
 			send(sender, Level.INFO, "&aThe channel ID was successfully set to " + arg);
 			sendChannelChangeMessage(sender);
-		} else {
+		} catch (TS3CommandFailedException ex) {
 			send(sender, Level.WARNING, "&4The channel ID could not be set.");
 			send(sender, Level.WARNING, "&4Ensure that this ID is really assigned to a channel.");
-			send(sender, Level.WARNING, "&4" + BungeeSpeak.getQuery().getLastError());
+			send(sender, Level.WARNING, "&4" + ex.getError().getId() + ": " + ex.getError().getMessage() + " - "  + ex.getError().getExtraMessage());
 		}
 		return false;
 	}

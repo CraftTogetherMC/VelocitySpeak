@@ -1,9 +1,9 @@
 package de.redstoneworld.bungeespeak.Commands;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
 import de.redstoneworld.bungeespeak.Configuration.Messages;
@@ -86,8 +86,8 @@ public abstract class BungeeSpeakCommand {
 		return true;
 	}
 
-	protected HashMap<String, String> getClient(String name, CommandSender sender) {
-		HashMap<String, String> client;
+	protected Client getClient(String name, CommandSender sender) {
+		Client client;
 		try {
 			client = BungeeSpeak.getClientList().getByPartialName(name);
 			if (client == null) {

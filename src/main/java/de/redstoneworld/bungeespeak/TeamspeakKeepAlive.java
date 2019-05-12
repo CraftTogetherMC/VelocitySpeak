@@ -1,5 +1,6 @@
 package de.redstoneworld.bungeespeak;
 
+import java.util.Collections;
 import java.util.Date;
 
 public class TeamspeakKeepAlive implements Runnable {
@@ -24,7 +25,7 @@ public class TeamspeakKeepAlive implements Runnable {
 				plugin.setStoppedTime(null);
 			}
 			try {
-				BungeeSpeak.getQuery().doCommand("clientupdate");
+				BungeeSpeak.getQuery().getApi().updateClient(Collections.emptyMap());
 				BungeeSpeak.getClientList().asyncUpdateAll();
 				BungeeSpeak.getChannelList().asyncUpdateAll();
 			} catch (NullPointerException e) {

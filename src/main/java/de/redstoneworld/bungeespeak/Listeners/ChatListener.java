@@ -1,5 +1,6 @@
 package de.redstoneworld.bungeespeak.Listeners;
 
+import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
 import de.redstoneworld.bungeespeak.Configuration.Messages;
@@ -8,7 +9,6 @@ import de.redstoneworld.bungeespeak.util.Replacer;
 import de.redstoneworld.bungeespeak.AsyncQueryUtils.QuerySender;
 import de.redstoneworld.bungeespeak.util.MessageUtil;
 
-import de.stefan1200.jts3serverquery.JTS3ServerQuery;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -56,7 +56,7 @@ public class ChatListener implements Listener {
 		if (e.getMessage().startsWith("/")) return;
 
 		/* If all players on the server will receive this message, it should be considered safe to relay */
-		/* TODO: Find good implementation on Bungee
+		/* TODO: Find good implementation on Bungee, probably needs to depend on specific chat plugin?
 		if (Configuration.PLUGINS_CHAT_RECIPIENTS_MUST_BE_EVERYONE.getBoolean()) {
 			if (e.getRecipients().size() != Bukkit.getOnlinePlayers().size()) {
 				return;
@@ -72,12 +72,12 @@ public class ChatListener implements Listener {
 		if (tsMsg.isEmpty()) return;
 
 		if (Configuration.TS_MESSAGES_TARGET.getTeamspeakTarget() == TsTarget.CHANNEL) {
-			QuerySender qs = new QuerySender(BungeeSpeak.getQuery().getCurrentQueryClientChannelID(),
-					JTS3ServerQuery.TEXTMESSAGE_TARGET_CHANNEL, tsMsg);
+			QuerySender qs = new QuerySender(BungeeSpeak.getQueryInfo().getChannelId(),
+					TextMessageTargetMode.CHANNEL, tsMsg);
 			BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qs);
 		} else if (Configuration.TS_MESSAGES_TARGET.getTeamspeakTarget() == TsTarget.SERVER) {
-			QuerySender qs = new QuerySender(BungeeSpeak.getQuery().getCurrentQueryClientServerID(),
-					JTS3ServerQuery.TEXTMESSAGE_TARGET_VIRTUALSERVER, tsMsg);
+			QuerySender qs = new QuerySender(BungeeSpeak.getQueryInfo().getVirtualServerId(),
+					TextMessageTargetMode.SERVER, tsMsg);
 			BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qs);
 		}
 	}

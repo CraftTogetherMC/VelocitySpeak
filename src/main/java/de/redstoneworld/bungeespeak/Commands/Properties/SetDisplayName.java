@@ -3,6 +3,7 @@ package de.redstoneworld.bungeespeak.Commands.Properties;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.github.theholywaffle.teamspeak3.api.exception.TS3CommandFailedException;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
 
@@ -36,12 +37,13 @@ public class SetDisplayName extends SetProperty {
 			send(sender, Level.WARNING, "&4The display name can't contain any spaces.");
 			return false;
 		}
-		if (BungeeSpeak.getQuery().setDisplayName(arg)) {
+		try {
+			BungeeSpeak.getQuery().getApi().setNickname(arg);
 			PROPERTY.set(arg);
 			return true;
-		} else {
+		} catch (TS3CommandFailedException ex) {
 			send(sender, Level.WARNING, "&4The display name could not be set.");
-			send(sender, Level.WARNING, "&4" + BungeeSpeak.getQuery().getLastError());
+			send(sender, Level.WARNING, "&4" + ex.getError().getId() + ": " + ex.getError().getMessage() + " - "  + ex.getError().getExtraMessage());
 			return false;
 		}
 	}

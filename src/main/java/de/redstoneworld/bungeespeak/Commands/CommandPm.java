@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
+import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 import de.redstoneworld.bungeespeak.Configuration.Messages;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.AsyncQueryUtils.QuerySender;
@@ -16,8 +18,6 @@ import de.redstoneworld.bungeespeak.util.Replacer;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-
-import de.stefan1200.jts3serverquery.JTS3ServerQuery;
 
 public class CommandPm extends BungeeSpeakCommand {
 
@@ -39,7 +39,7 @@ public class CommandPm extends BungeeSpeakCommand {
 
 		if (!isConnected(sender)) return;
 
-		HashMap<String, String> client = getClient(args[1], sender);
+		Client client = getClient(args[1], sender);
 		if (client == null) return;
 
 		StringBuilder sb = new StringBuilder();
@@ -58,13 +58,13 @@ public class CommandPm extends BungeeSpeakCommand {
 			name = MessageUtil.toMinecraft(Configuration.TS_CONSOLE_NAME.getString(), false, false);
 		}
 
-		Replacer r = new Replacer().addSender(sender).addTargetClient(client).addMessage(sb.toString());
+		Replacer r = new Replacer().addSender(sender).addTargetClient(client.getMap()).addMessage(sb.toString());
 		tsMsg = MessageUtil.toTeamspeak(r.replace(tsMsg), true, Configuration.TS_ALLOW_LINKS.getBoolean());
 		mcMsg = r.replace(mcMsg);
 
 		if (tsMsg == null || tsMsg.isEmpty()) return;
-		Integer i = Integer.valueOf(client.get("clid"));
-		QuerySender qs = new QuerySender(i, JTS3ServerQuery.TEXTMESSAGE_TARGET_CLIENT, tsMsg);
+		int i = client.getId();
+		QuerySender qs = new QuerySender(i, TextMessageTargetMode.CLIENT, tsMsg);
 		BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qs);
 		BungeeSpeak.registerRecipient(name, i);
 		if (mcMsg == null || mcMsg.isEmpty()) return;
@@ -79,8 +79,8 @@ public class CommandPm extends BungeeSpeakCommand {
 	public List<String> onTabComplete(CommandSender sender, String[] args) {
 		if (args.length != 2) return null;
 		List<String> al = new ArrayList<String>();
-		for (HashMap<String, String> client : BungeeSpeak.getClientList().getClients().values()) {
-			String n = client.get("client_nickname").replaceAll(" ", "");
+		for (Client client : BungeeSpeak.getClientList().getClients().values()) {
+			String n = client.getNickname().replaceAll(" ", "");
 			if (n.toLowerCase().startsWith(args[1].toLowerCase())) {
 				al.add(n);
 			}

@@ -37,6 +37,11 @@ teamspeak:
   # Read more about chat priorities here: http://ci.md-5.net/job/BungeeCord/ws/event/target/apidocs/net/md_5/bungee/event/EventPriority.html
   ChatListenerPriority: HIGHEST
   
+  # Floodrate
+  # The rate in millisconds in which commands are send to the server
+  # 300ms is the default, whitelist the query to allow faster send rates
+  Floodrate: 300
+  
   # Debug Mode
   # Use if the plugin doesn't work at all
   # Or for posting error logs in the forum

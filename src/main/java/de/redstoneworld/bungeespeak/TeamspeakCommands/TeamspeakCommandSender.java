@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
 import de.redstoneworld.bungeespeak.Configuration.Messages;
@@ -19,7 +20,6 @@ import de.redstoneworld.bungeespeak.util.MessageUtil;
 
 import net.md_5.bungee.api.CommandSender;
 
-import de.stefan1200.jts3serverquery.JTS3ServerQuery;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 
@@ -171,7 +171,7 @@ public class TeamspeakCommandSender implements CommandSender {
 		}
 
 		private void sendToTeamspeak(String message) {
-			QuerySender qs = new QuerySender(clid, JTS3ServerQuery.TEXTMESSAGE_TARGET_CLIENT, message);
+			QuerySender qs = new QuerySender(clid, TextMessageTargetMode.CLIENT, message);
 			BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qs);
 		}
 

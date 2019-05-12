@@ -1,7 +1,6 @@
 package de.redstoneworld.bungeespeak.AsyncQueryUtils;
 
-import java.util.HashMap;
-
+import com.github.theholywaffle.teamspeak3.api.exception.TS3CommandFailedException;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 
 public class QueryBan implements Runnable {
@@ -26,20 +25,10 @@ public class QueryBan implements Runnable {
 			return;
 		}
 
-		HashMap<String, String> hmIn;
-		StringBuilder command = new StringBuilder().append("banclient");
-		command.append(" clid=").append(String.valueOf(id));
-		if (reason != null && !reason.isEmpty()) {
-			command.append(" banreason=").append(BungeeSpeak.getQuery().encodeTS3String(reason));
-		}
-
 		try {
-			hmIn = BungeeSpeak.getQuery().doCommand(command.toString());
-
-			if (!hmIn.get("id").equals("0")) {
-				BungeeSpeak.log().info("banClient()" + hmIn.get("id") + hmIn.get("msg") + hmIn.get("extra_msg")
-						+ hmIn.get("failed_permid"));
-			}
+			BungeeSpeak.getQuery().getApi().banClient(id, reason);
+		} catch (TS3CommandFailedException ex) {
+			BungeeSpeak.log().info("banClient()" + ex.getError().getId() + ex.getError().getMessage() + ex.getError().getExtraMessage() + ex.getError().getFailedPermissionId());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

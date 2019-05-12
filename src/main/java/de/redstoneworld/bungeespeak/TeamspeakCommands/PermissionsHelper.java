@@ -9,23 +9,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
-import java.util.Vector;
 
+import com.github.theholywaffle.teamspeak3.api.PermissionGroupDatabaseType;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 
 import com.google.common.collect.Lists;
 
 import de.redstoneworld.bungeespeak.Configuration.YamlConfig;
-import de.stefan1200.jts3serverquery.JTS3ServerQuery;
 import net.md_5.bungee.config.Configuration;
 
 public final class PermissionsHelper implements Runnable {
 
 	private YamlConfig permissionsConfig;
-	private HashMap<String, ServerGroup> serverGroupMap;
+	private HashMap<Integer, ServerGroup> serverGroupMap;
 
 	public PermissionsHelper() {
-		serverGroupMap = new HashMap<String, ServerGroup>();
+		serverGroupMap = new HashMap<>();
 	}
 
 	public void runAsynchronously() {
@@ -42,12 +41,12 @@ public final class PermissionsHelper implements Runnable {
 			e.printStackTrace();
 		}
 
-		HashMap<String, ServerGroup> serverGroups = new HashMap<String, ServerGroup>();
-		HashMap<String, HashMap<String, Boolean>> perms = new HashMap<String, HashMap<String, Boolean>>();
-		HashMap<String, List<String>> inherits = new HashMap<String, List<String>>();
-		Set<String> removedServerGroups = new HashSet<String>();
-		Queue<String> resolved = new LinkedList<String>();
-		Queue<String> unresolved = new LinkedList<String>();
+		HashMap<Integer, ServerGroup> serverGroups = new HashMap<>();
+		HashMap<Integer, HashMap<String, Boolean>> perms = new HashMap<>();
+		HashMap<Integer, List<String>> inherits = new HashMap<>();
+		Set<String> removedServerGroups = new HashSet<>();
+		Queue<Integer> resolved = new LinkedList<>();
+		Queue<Integer> unresolved = new LinkedList<>();
 
 		for (String key : permissionsConfig.getKeys()) {
 			if (permissionsConfig.isConfigurationSection(key)) {
@@ -56,21 +55,21 @@ public final class PermissionsHelper implements Runnable {
 		}
 
 		// Set up a raw list of permissions
-		Vector<HashMap<String, String>> groups = BungeeSpeak.getQuery().getList(JTS3ServerQuery.LISTMODE_SERVERGROUPLIST);
+		List<com.github.theholywaffle.teamspeak3.api.wrapper.ServerGroup> groups = BungeeSpeak.getQuery().getApi().getServerGroups();
 		if (groups == null) {
 			BungeeSpeak.log().severe("Unable to retrieve Teamspeak ServerGroups.");
 			BungeeSpeak.log().severe("This could be caused by a permissions issue.");
 			return;
 		}
-		for (HashMap<String, String> group : groups) {
-			String id = group.get("sgid");
-			String type = group.get("type");
+		for (com.github.theholywaffle.teamspeak3.api.wrapper.ServerGroup group : groups) {
+			int id = group.getId();
+			PermissionGroupDatabaseType type = group.getType();
 			String name = group.get("name");
 			if (name == null || name.isEmpty()) continue;
-			if (type == null || !("1".equals(type))) continue;
+			if (type != PermissionGroupDatabaseType.REGULAR) continue;
 
-			if (permissionsConfig.isConfigurationSection(id)) {
-				Configuration section = permissionsConfig.getSection(id);
+			if (permissionsConfig.isConfigurationSection(String.valueOf(id))) {
+				Configuration section = permissionsConfig.getSection(String.valueOf(id));
 				section.set("name", group.get("name"));
 				if (!(section.get("blocked") instanceof Boolean)) {
 					section.set("blocked", false);
@@ -102,15 +101,15 @@ public final class PermissionsHelper implements Runnable {
 				// Don't waste time if someone is blocked anyways
 				if (blocked) {
 					serverGroups.put(id, new ServerGroup(name, true));
-					perms.put(id, new HashMap<String, Boolean>());
+					perms.put(id, new HashMap<>());
 				} else {
 					serverGroups.put(id, new ServerGroup(name, op, commandWhitelist, commandBlacklist));
 					perms.put(id, parseConfigSection(cs));
 				}
 
-				removedServerGroups.remove(id);
+				removedServerGroups.remove(String.valueOf(id));
 			} else {
-				permissionsConfig.set(id + ".name", group.get("name"));
+				permissionsConfig.set(id + ".name", group.getName());
 				permissionsConfig.set(id + ".blocked", false);
 				permissionsConfig.set(id + ".op", false);
 				permissionsConfig.set(id + ".permissions.somePlugin/permission", true);
@@ -119,7 +118,7 @@ public final class PermissionsHelper implements Runnable {
 				permissionsConfig.set(id + ".command-blacklist", Lists.newArrayList("SomeBlockedCommand"));
 				permissionsConfig.set(id + ".inherits", new ArrayList<String>());
 
-				serverGroups.put(id, new ServerGroup(group.get("name")));
+				serverGroups.put(id, new ServerGroup(group.getName()));
 				perms.put(id, parseConfigSection(permissionsConfig.getSection(id + ".permissions")));
 			}
 		}
@@ -133,7 +132,7 @@ public final class PermissionsHelper implements Runnable {
 		save();
 
 		// Get the initial resolved groups
-		for (String id : serverGroups.keySet()) {
+		for (Integer id : serverGroups.keySet()) {
 			List<String> i = inherits.get(id);
 			if ((i == null) || (i.size() == 0)) {
 				resolved.add(id);
@@ -151,11 +150,11 @@ public final class PermissionsHelper implements Runnable {
 			// Add the permissions of resolved groups thus resolving the permissions of other groups.
 
 			while (resolved.size() > 0) {
-				String id = resolved.poll();
+				Integer id = resolved.poll();
 				ServerGroup sg = serverGroups.get(id);
 				sg.getPermissions().putAll(perms.get(id));
 
-				for (String u : inherits.keySet()) {
+				for (Integer u : inherits.keySet()) {
 					List<String> i = inherits.get(u);
 					if ((i.size() > 0) && (i.contains(id))) {
 						i.remove(id);
@@ -177,7 +176,7 @@ public final class PermissionsHelper implements Runnable {
 			}
 
 			// Otherwise, just choose a group with an unresolved dependency
-			String id = unresolved.poll();
+			Integer id = unresolved.poll();
 			ServerGroup sg = serverGroups.get(id);
 			sg.getPermissions().putAll(perms.get(id));
 
@@ -192,9 +191,9 @@ public final class PermissionsHelper implements Runnable {
 			sb.append(".");
 			BungeeSpeak.log().warning(sb.toString());
 
-			inherits.put(id, new ArrayList<String>()); // Clear the stored dependencies for this one.
+			inherits.put(id, new ArrayList<>()); // Clear the stored dependencies for this one.
 
-			for (String u : inherits.keySet()) {
+			for (Integer u : inherits.keySet()) {
 				List<String> i = inherits.get(u);
 				if ((i.size() > 0) && (i.contains(id))) {
 					i.remove(id);
@@ -226,15 +225,27 @@ public final class PermissionsHelper implements Runnable {
 		return map;
 	}
 
-	public ServerGroup getServerGroup(String entry) {
-		if ((entry == null) || (entry.isEmpty())) return null;
-		if (!entry.contains(",")) {
-			return getSingleServerGroup(entry);
+	public ServerGroup getServerGroup(String groupsString) {
+		List<Integer> groups = new ArrayList<>();
+		for (String gId : groupsString.split(",")) {
+			try {
+				groups.add(Integer.valueOf(gId));
+			} catch (IllegalArgumentException e) {
+				BungeeSpeak.log().warning(gId + " is not a valid integer groupd id?");
+			}
+		}
+		return getServerGroup(groups.stream().mapToInt(Integer::intValue).toArray());
+	}
+
+	public ServerGroup getServerGroup(int[] groups) {
+		if ((groups == null) || (groups.length == 0)) return null;
+		if (groups.length == 1) {
+			return getSingleServerGroup(groups[0]);
 		}
 
 		ServerGroup combined = new ServerGroup("");
 		StringBuilder groupName = new StringBuilder("[");
-		for (String group : entry.split(",")) {
+		for (int group : groups) {
 			ServerGroup sg = getSingleServerGroup(group);
 			if (sg == null) {
 				BungeeSpeak.log().warning("Could not resolve server group " + group);
@@ -256,7 +267,7 @@ public final class PermissionsHelper implements Runnable {
 		return combined;
 	}
 
-	public ServerGroup getSingleServerGroup(String id) {
+	public ServerGroup getSingleServerGroup(int id) {
 		return serverGroupMap.get(id);
 	}
 

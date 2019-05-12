@@ -4,21 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
+import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
+import com.github.theholywaffle.teamspeak3.api.wrapper.ClientInfo;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
-import de.stefan1200.jts3serverquery.JTS3ServerQuery;
 
 public class ClientList {
 
-	private ConcurrentHashMap<Integer, HashMap<String, String>> clients;
+	private ConcurrentHashMap<Integer, Client> clients;
 	private Logger logger;
 
 	public ClientList() {
 		logger = BungeeSpeak.getInstance().getLogger();
-		clients = new ConcurrentHashMap<Integer, HashMap<String, String>>();
+		clients = new ConcurrentHashMap<>();
 	}
 
 	public void asyncUpdateAll() {
@@ -38,23 +38,23 @@ public class ClientList {
 		return clients.containsKey(clid);
 	}
 
-	public HashMap<String, String> get(int clid) {
+	public Client get(int clid) {
 		return clients.get(clid);
 	}
 
-	public HashMap<String, String> getByName(String name) {
-		for (HashMap<String, String> client : clients.values()) {
-			if (client.get("client_nickname").equals(name)) return client;
+	public Client getByName(String name) {
+		for (Client client : clients.values()) {
+			if (client.getNickname().equals(name)) return client;
 		}
 		return null;
 	}
 
-	public HashMap<String, String> getByPartialName(String name) {
+	public Client getByPartialName(String name) {
 
-		HashMap<String, String> ret = null;
+		Client ret = null;
 
-		for (HashMap<String, String> client : clients.values()) {
-			String n = client.get("client_nickname").toLowerCase().replaceAll(" ", "");
+		for (Client client : clients.values()) {
+			String n = client.getNickname().toLowerCase().replaceAll(" ", "");
 			if (n.startsWith(name.toLowerCase())) {
 				if (ret == null) {
 					ret = client;
@@ -69,21 +69,21 @@ public class ClientList {
 
 	public List<String> getClientNames() {
 		List<String> ret = new ArrayList<String>();
-		for (HashMap<String, String> client : clients.values()) {
-			ret.add(client.get("client_nickname"));
+		for (Client client : clients.values()) {
+			ret.add(client.getNickname());
 		}
 		return ret;
 	}
 
-	public ConcurrentHashMap<Integer, HashMap<String, String>> getFilteredClients() {
+	public ConcurrentHashMap<Integer, Client> getFilteredClients() {
 		if (Configuration.MC_COMMANDS_CLIENTLIST_FILTER_RULES.getStringList().size() == 0) {
 			return clients;
 		}
-		ConcurrentHashMap<Integer, HashMap<String, String>> filteredClients = new ConcurrentHashMap<Integer, HashMap<String, String>>();
-		for (Map.Entry<Integer, HashMap<String, String>> client : clients.entrySet()) {
+		ConcurrentHashMap<Integer, Client> filteredClients = new ConcurrentHashMap<>();
+		for (Map.Entry<Integer, Client> client : clients.entrySet()) {
 			boolean add = true;
 			for (String rule : Configuration.MC_COMMANDS_CLIENTLIST_FILTER_RULES.getStringList()) {
-				if (client.getValue().get("client_nickname").matches(rule)) {
+				if (client.getValue().getNickname().matches(rule)) {
 					add = false;
 					break;
 				}
@@ -95,7 +95,7 @@ public class ClientList {
 		return filteredClients;
 	}
 
-	public ConcurrentHashMap<Integer, HashMap<String, String>> getClients() {
+	public ConcurrentHashMap<Integer, Client> getClients() {
 		return clients;
 	}
 
@@ -104,7 +104,7 @@ public class ClientList {
 	}
 
 	public void removeClient(int clid) {
-		if (clients.containsKey(clid)) clients.remove(clid);
+		clients.remove(clid);
 	}
 
 	public int size() {
@@ -113,7 +113,7 @@ public class ClientList {
 
 	public void updateClient(int clid) {
 		// This should prevent a wrong result in #containsID(int) while the data is still being updated
-		clients.put(clid, new HashMap<String, String>());
+		clients.put(clid, new Client(new HashMap<>()));
 
 		(new ClientUpdater(this, clid)).run();
 	}
@@ -122,15 +122,16 @@ public class ClientList {
 		(new ClientUpdater(this)).run();
 	}
 
-	private void setClientData(HashMap<String, String> client, int clid) {
-		if (client != null && client.size() != 0) {
-			if ("0".equals(client.get("client_type"))) {
-				client.put("clid", String.valueOf(clid));
-				clients.put(clid, client);
+	private void setClientData(Client client) {
+		if (client != null && client.getId() != -1) {
+			if (client.getMap().size() > 1) {
+				if (client.getType() == 0) {
+					clients.put(client.getId(), client);
+				}
+			} else {
+				clients.remove(client.getId());
+				logger.warning("Received no information for client id " + client.getId() + ".");
 			}
-		} else {
-			clients.remove(clid);
-			logger.warning("Received no information for client id " + clid + ".");
 		}
 	}
 
@@ -156,26 +157,25 @@ public class ClientList {
 			if (!BungeeSpeak.getQuery().isConnected()) return;
 
 			if (updateAll) {
-				Vector<HashMap<String, String>> clientList;
-				clientList = BungeeSpeak.getQuery().getList(JTS3ServerQuery.LISTMODE_CLIENTLIST, "-info,-groups,-country");
+				List<Client> clientList = BungeeSpeak.getQuery().getApi().getClients();
 				if (clientList == null) {
 					BungeeSpeak.log().severe("Error while receiving client information.");
 					return;
 				}
-				for (HashMap<String, String> client : clientList) {
+				for (Client client : clientList) {
 					if (client == null) {
 						BungeeSpeak.log().severe("Error while receiving client information.");
 						return;
 					}
-					cl.setClientData(client, Integer.valueOf(client.get("clid")));
+					cl.setClientData(client);
 				}
 			} else {
-				HashMap<String, String> client = BungeeSpeak.getQuery().getInfo(JTS3ServerQuery.INFOMODE_CLIENTINFO, clid);
+				ClientInfo client = BungeeSpeak.getQuery().getApi().getClientInfo(clid);
 				if (client == null) {
 					BungeeSpeak.log().severe("Error while receiving client information.");
 					return;
 				}
-				cl.setClientData(client, clid);
+				cl.setClientData(client);
 			}
 		}
 	}

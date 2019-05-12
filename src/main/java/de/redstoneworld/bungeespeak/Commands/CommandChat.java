@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
 import de.redstoneworld.bungeespeak.Configuration.Messages;
@@ -13,8 +14,6 @@ import de.redstoneworld.bungeespeak.util.MessageUtil;
 
 
 import net.md_5.bungee.api.CommandSender;
-
-import de.stefan1200.jts3serverquery.JTS3ServerQuery;
 
 public class CommandChat extends BungeeSpeakCommand {
 
@@ -51,8 +50,8 @@ public class CommandChat extends BungeeSpeakCommand {
 		mcMsg = r.replace(mcMsg);
 
 		if (tsMsg == null || tsMsg.isEmpty()) return;
-		QuerySender qs = new QuerySender(BungeeSpeak.getQuery().getCurrentQueryClientChannelID(),
-				JTS3ServerQuery.TEXTMESSAGE_TARGET_CHANNEL, tsMsg);
+		QuerySender qs = new QuerySender(BungeeSpeak.getQueryInfo().getChannelId(),
+				TextMessageTargetMode.CHANNEL, tsMsg);
 		BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qs);
 		broadcastMessage(mcMsg, sender);
 	}

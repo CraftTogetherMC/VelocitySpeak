@@ -1,22 +1,22 @@
 package de.redstoneworld.bungeespeak;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import de.stefan1200.jts3serverquery.JTS3ServerQuery;
+import com.github.theholywaffle.teamspeak3.api.wrapper.Channel;
+import com.github.theholywaffle.teamspeak3.api.wrapper.ChannelBase;
+import com.github.theholywaffle.teamspeak3.api.wrapper.ChannelInfo;
 
 public class ChannelList {
 
-	private ConcurrentHashMap<Integer, HashMap<String, String>> channels;
+	private ConcurrentHashMap<Integer, ChannelBase> channels;
 	private Logger logger;
 
 	public ChannelList() {
 		logger = BungeeSpeak.getInstance().getLogger();
-		channels = new ConcurrentHashMap<Integer, HashMap<String, String>>();
+		channels = new ConcurrentHashMap<>();
 	}
 
 	public void asyncUpdateAll() {
@@ -36,23 +36,23 @@ public class ChannelList {
 		return channels.containsKey(cid);
 	}
 
-	public HashMap<String, String> get(int cid) {
+	public ChannelBase get(int cid) {
 		return channels.get(cid);
 	}
 
-	public HashMap<String, String> getByName(String name) {
-		for (HashMap<String, String> channel : channels.values()) {
+	public ChannelBase getByName(String name) {
+		for (ChannelBase channel : channels.values()) {
 			if (channel.get("channel_name").equals(name)) return channel;
 		}
 		return null;
 	}
 
-	public HashMap<String, String> getByPartialName(String name) {
+	public ChannelBase getByPartialName(String name) {
 
-		HashMap<String, String> ret = null;
+		ChannelBase ret = null;
 
-		for (HashMap<String, String> channel : channels.values()) {
-			String n = channel.get("channel_name").toLowerCase().replaceAll(" ", "");
+		for (ChannelBase channel : channels.values()) {
+			String n = channel.getName().toLowerCase().replaceAll(" ", "");
 			if (n.startsWith(name.toLowerCase())) {
 				if (ret == null) {
 					ret = channel;
@@ -67,13 +67,13 @@ public class ChannelList {
 
 	public List<String> getChannelNames() {
 		List<String> ret = new ArrayList<String>();
-		for (HashMap<String, String> channel : channels.values()) {
-			ret.add(channel.get("channel_name"));
+		for (ChannelBase channel : channels.values()) {
+			ret.add(channel.getName());
 		}
 		return ret;
 	}
 
-	public ConcurrentHashMap<Integer, HashMap<String, String>> getChannels() {
+	public ConcurrentHashMap<Integer, ChannelBase> getChannels() {
 		return channels;
 	}
 
@@ -82,7 +82,7 @@ public class ChannelList {
 	}
 
 	public void removeChannel(int cid) {
-		if (channels.containsKey(cid)) channels.remove(cid);
+		channels.remove(cid);
 	}
 
 	public int size() {
@@ -97,12 +97,14 @@ public class ChannelList {
 		(new ChannelUpdater(this)).run();
 	}
 
-	private void setChannelData(HashMap<String, String> channel, int cid) {
-		if (channel != null && channel.size() != 0) {
-			channel.put("cid", String.valueOf(cid));
-			channels.put(cid, channel);
-		} else {
-			logger.warning("Received no information for channel id " + cid + ".");
+	private void setChannelData(ChannelBase channel) {
+		if (channel != null && channel.getId() != -1) {
+			if (channel.getMap().size() > 1) {
+				channels.put(channel.getId(), channel);
+			} else {
+				channels.remove(channel.getId());
+				logger.warning("Received no information for channel id " + channel.getId() + ".");
+			}
 		}
 	}
 
@@ -128,26 +130,25 @@ public class ChannelList {
 			if (!BungeeSpeak.getQuery().isConnected()) return;
 
 			if (updateAll) {
-				Vector<HashMap<String, String>> channelList;
-				channelList = BungeeSpeak.getQuery().getList(JTS3ServerQuery.LISTMODE_CHANNELLIST);
+				List<Channel> channelList = BungeeSpeak.getQuery().getApi().getChannels();
 				if (channelList == null) {
 					BungeeSpeak.log().severe("Error while receiving channel information.");
 					return;
 				}
-				for (HashMap<String, String> channel : channelList) {
+				for (Channel channel : channelList) {
 					if (channel == null) {
 						BungeeSpeak.log().severe("Error while receiving channel information.");
 						return;
 					}
-					cl.setChannelData(channel, Integer.valueOf(channel.get("cid")));
+					cl.setChannelData(channel);
 				}
 			} else {
-				HashMap<String, String> channel = BungeeSpeak.getQuery().getInfo(JTS3ServerQuery.INFOMODE_CHANNELINFO, cid);
+				ChannelInfo channel = BungeeSpeak.getQuery().getApi().getChannelInfo(cid);
 				if (channel == null) {
 					BungeeSpeak.log().severe("Error while receiving channel information.");
 					return;
 				}
-				cl.setChannelData(channel, cid);
+				cl.setChannelData(channel);
 			}
 		}
 	}

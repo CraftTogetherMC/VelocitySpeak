@@ -21,9 +21,9 @@ public class CommandStatus extends BungeeSpeakCommand {
 			send(sender, Level.INFO, "&eTeamspeak Listener: &arunning");
 			send(sender, Level.INFO, "&eRunning since: &a"
 					+ DateManager.dateToString(BungeeSpeak.getInstance().getStartedTime()));
-			send(sender, Level.INFO, "&eSID = &a" + BungeeSpeak.getQuery().getCurrentQueryClientServerID()
-					+ "&e, CID = &a" + BungeeSpeak.getQuery().getCurrentQueryClientChannelID() + "&e, CLID = &a"
-					+ BungeeSpeak.getQuery().getCurrentQueryClientID());
+			send(sender, Level.INFO, "&eSID = &a" + BungeeSpeak.getQueryInfo().getVirtualServerId()
+					+ "&e, CID = &a" + BungeeSpeak.getQueryInfo().getChannelId() + "&e, CLID = &a"
+					+ BungeeSpeak.getQueryInfo().getId());
 		} else if (BungeeSpeak.getInstance().getStoppedTime() == null
 				|| BungeeSpeak.getInstance().getStartedTime() == null) {
 			send(sender, Level.WARNING, "&eTeamspeak Listener: &6connecting");

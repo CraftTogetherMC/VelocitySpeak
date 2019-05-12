@@ -37,6 +37,7 @@ public enum Configuration {
 	TS_LOGGING("teamspeak.LogChatInConsole", true),
 	TS_CHAT_LISTENER_PRIORITY("teamspeak.ChatListenerPriority", "HIGHEST"),
 	TS_DEBUGGING("teamspeak.Debug", false),
+	TS_FLOODRATE("teamspeak.Floodrate", 300),
 
 	TS_COMMANDS_ENABLED("teamspeak-commands.Enabled", false),
 	TS_COMMANDS_PREFIX("teamspeak-commands.CommandPrefix", "!"),

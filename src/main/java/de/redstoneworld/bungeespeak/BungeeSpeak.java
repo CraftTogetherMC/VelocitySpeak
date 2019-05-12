@@ -1,6 +1,5 @@
 package de.redstoneworld.bungeespeak;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +8,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import com.github.theholywaffle.teamspeak3.TS3Config;
+import com.github.theholywaffle.teamspeak3.TS3Query;
+import com.github.theholywaffle.teamspeak3.api.event.TS3Listener;
+import com.github.theholywaffle.teamspeak3.api.wrapper.ServerQueryInfo;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
 import de.redstoneworld.bungeespeak.Configuration.Messages;
 import de.redstoneworld.bungeespeak.Listeners.ChatListener;
@@ -17,12 +20,13 @@ import de.redstoneworld.bungeespeak.TeamspeakCommands.PermissionsHelper;
 import de.redstoneworld.bungeespeak.TeamspeakCommands.TeamspeakCommandExecutor;
 import de.redstoneworld.bungeespeak.teamspeakEvent.TeamspeakListener;
 
-import de.stefan1200.jts3serverquery.*;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class BungeeSpeak extends Plugin {
+	private static int queryId;
+	private static ServerQueryInfo queryInfo;
 	private boolean enabled = false;
 
 	private static final int KEEP_ALIVE_DELAY = 60;
@@ -32,14 +36,14 @@ public class BungeeSpeak extends Plugin {
 	private static PermissionsHelper permissionsHelper;
 	private static ClientList clients;
 	private static ChannelList channels;
-	private static JTS3ServerQuery query;
+	private static TS3Query query;
 
 	private static List<String> muted;
 	private static HashMap<Integer, String> pmRecipients;
 	private static HashMap<String, Integer> pmSenders;
 
 	private QueryConnector qc;
-	private TeamspeakActionListener ts;
+	private TS3Listener ts;
 	private TeamspeakKeepAlive tsKeepAlive;
 	private TsCommandExecutor mcTsCommand;
 	private TsaCommandExecutor mcTsaCommand;
@@ -60,24 +64,13 @@ public class BungeeSpeak extends Plugin {
 		pmRecipients = new HashMap<Integer, String>();
 		pmSenders = new HashMap<String, Integer>();
 
-		try {
-			Configuration.reload();
-		} catch (IOException e) {
-			getLogger().severe("Unable to load configuration! " + getDescription().getName() + " will not be enabled!");
-			e.printStackTrace();
-			return;
-		}
-		try {
-			Messages.reload();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		query = new JTS3ServerQuery();
-		query.DEBUG = Configuration.TS_DEBUGGING.getBoolean();
 		clients = new ClientList();
 		channels = new ChannelList();
 		permissionsHelper = new PermissionsHelper();
+
+		if (!reload()) {
+			onDisable();
+		}
 
 		ts = new TeamspeakListener();
 		qc = new QueryConnector();
@@ -87,9 +80,7 @@ public class BungeeSpeak extends Plugin {
 
 		mcTsCommand = new TsCommandExecutor();
 		mcTsaCommand = new TsaCommandExecutor();
-		tsCommand = new TeamspeakCommandExecutor();
 		playerListener = new PlayerListener();
-		chatListener = new ChatListener(Configuration.TS_CHAT_LISTENER_PRIORITY.getPriority());
 
 		getProxy().getPluginManager().registerListener(this, chatListener);
 		getProxy().getPluginManager().registerListener(this, playerListener);
@@ -102,8 +93,7 @@ public class BungeeSpeak extends Plugin {
 
 	public void onDisable() {
 		enabled = false;
-		query.removeTeamspeakActionListener();
-		query.closeTS3Connection();
+		query.exit();
 
 		this.getProxy().getScheduler().cancel(this);
 
@@ -122,8 +112,12 @@ public class BungeeSpeak extends Plugin {
 		return instance.logger;
 	}
 
-	public static JTS3ServerQuery getQuery() {
+	public static TS3Query getQuery() {
 		return query;
+	}
+
+	public static ServerQueryInfo getQueryInfo() {
+		return queryInfo;
 	}
 
 	public static TeamspeakCommandExecutor getTeamspeakCommandExecutor() {
@@ -182,11 +176,13 @@ public class BungeeSpeak extends Plugin {
 	}
 
 	private boolean isFloodBanned() {
+		/*
 		if (query.getLastErrorID() == 3331) {
 			logger.severe("You were flood banned. You need to add the Minecraft server IP to the TeamSpeak query whitelist!");
 			enabled = false;
 			return true;
 		}
+		*/
 		return false;
 	}
 
@@ -207,7 +203,7 @@ public class BungeeSpeak extends Plugin {
 		return qc;
 	}
 
-	public TeamspeakActionListener getTSActionListener() {
+	public TS3Listener getTSActionListener() {
 		return ts;
 	}
 
@@ -252,17 +248,36 @@ public class BungeeSpeak extends Plugin {
 
 	public boolean reload() {
 		try {
-			query.closeTS3Connection();
+			if (query != null) {
+				query.exit();
+			}
 
 			setStoppedTime(null);
 			setStartedTime(null);
 
-			Configuration.reload();
-			Messages.reload();
-			query.DEBUG = Configuration.TS_DEBUGGING.getBoolean();
+			try {
+				Configuration.reload();
+			} catch (IOException e) {
+				getLogger().severe("Unable to load configuration! " + getDescription().getName() + " will not be enabled!");
+				e.printStackTrace();
+				return false;
+			}
+			try {
+				Messages.reload();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 			chatListener.setPriority(Configuration.TS_CHAT_LISTENER_PRIORITY.getPriority());
 
 			tsCommand = new TeamspeakCommandExecutor();
+
+			query = new TS3Query(new TS3Config()
+					.setHost(Configuration.MAIN_IP.getString())
+					.setQueryPort(Configuration.MAIN_QUERYPORT.getInt())
+					.setFloodRate(TS3Query.FloodRate.custom(Configuration.TS_FLOODRATE.getInt()))
+					.setEnableCommunicationsLogging(Configuration.TS_DEBUGGING.getBoolean())
+			);
 
 			qc = new QueryConnector();
 			getProxy().getScheduler().runAsync(this, qc);
@@ -276,23 +291,8 @@ public class BungeeSpeak extends Plugin {
 		}
 	}
 
-	public void setUpForTesting() throws NoSuchFieldException, IllegalAccessException, IOException {
-		instance = this;
-		logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-		logger.info("Setting up for testing.");
-		final File dataFolder = new File("BungeeSpeak");
-		dataFolder.mkdir();
-
-		Configuration.reload();
-		Messages.reload();
-
-		query = new JTS3ServerQuery();
-		query.DEBUG = true;
-		clients = new ClientList();
-		channels = new ChannelList();
-		permissionsHelper = new PermissionsHelper();
-
-		ts = new TeamspeakListener();
+	public static void updateQueryInfo() {
+		queryInfo = BungeeSpeak.getQuery().getApi().whoAmI();
 	}
 
 	public boolean isEnabled() {

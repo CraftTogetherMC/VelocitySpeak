@@ -1,15 +1,15 @@
 package de.redstoneworld.bungeespeak.teamspeakEvent;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Messages;
 
 public class ClientMovedEvent extends TeamspeakEvent {
 
-	private HashMap<String, String> info;
+	private Map<String, String> info;
 
-	public ClientMovedEvent(HashMap<String, String> infoMap) {
+	public ClientMovedEvent(Map<String, String> infoMap) {
 		setUser(Integer.parseInt(infoMap.get("clid")));
 		info = infoMap;
 		BungeeSpeak.getClientList().asyncUpdateClient(Integer.parseInt(infoMap.get("clid")));
@@ -25,7 +25,7 @@ public class ClientMovedEvent extends TeamspeakEvent {
 
 		if (info.get("reasonid").equals("4")) return;
 
-		if (Integer.parseInt(info.get("ctid")) == BungeeSpeak.getQuery().getCurrentQueryClientChannelID()) {
+		if (Integer.parseInt(info.get("ctid")) == BungeeSpeak.getQueryInfo().getChannelId()) {
 			// Client entered channel
 			sendMessage(Messages.TS_EVENT_CHANNEL_ENTER, "channelenter");
 		} else {

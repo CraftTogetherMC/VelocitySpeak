@@ -1,9 +1,11 @@
 package de.redstoneworld.bungeespeak.Commands.Properties;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
+import com.github.theholywaffle.teamspeak3.api.event.TS3EventType;
+import com.github.theholywaffle.teamspeak3.api.exception.TS3CommandFailedException;
 import de.redstoneworld.bungeespeak.Configuration.Messages;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
@@ -13,8 +15,6 @@ import de.redstoneworld.bungeespeak.util.Replacer;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-
-import de.stefan1200.jts3serverquery.JTS3ServerQuery;
 
 public abstract class SetProperty {
 
@@ -30,24 +30,24 @@ public abstract class SetProperty {
 	}
 
 	protected void reloadListener() {
-		BungeeSpeak.getQuery().removeAllEvents();
+		BungeeSpeak.getQuery().getApi().unregisterAllEvents();
 
 		if (Configuration.TS_ENABLE_SERVER_EVENTS.getBoolean()) {
-			BungeeSpeak.getQuery().addEventNotify(JTS3ServerQuery.EVENT_MODE_SERVER, 0);
+			BungeeSpeak.getQuery().getApi().registerEvent(TS3EventType.SERVER);
 		}
 		if (Configuration.TS_ENABLE_SERVER_MESSAGES.getBoolean()) {
-			BungeeSpeak.getQuery().addEventNotify(JTS3ServerQuery.EVENT_MODE_TEXTSERVER, 0);
+			BungeeSpeak.getQuery().getApi().registerEvent(TS3EventType.TEXT_SERVER);
 		}
 		if (Configuration.TS_ENABLE_CHANNEL_EVENTS.getBoolean()) {
-			BungeeSpeak.getQuery().addEventNotify(JTS3ServerQuery.EVENT_MODE_CHANNEL,
-					BungeeSpeak.getQuery().getCurrentQueryClientChannelID());
+			BungeeSpeak.getQuery().getApi().registerEvent(TS3EventType.CHANNEL,
+					BungeeSpeak.getQueryInfo().getChannelId());
 		}
 		if (Configuration.TS_ENABLE_CHANNEL_MESSAGES.getBoolean()) {
-			BungeeSpeak.getQuery().addEventNotify(JTS3ServerQuery.EVENT_MODE_TEXTCHANNEL,
-					BungeeSpeak.getQuery().getCurrentQueryClientChannelID());
+			BungeeSpeak.getQuery().getApi().registerEvent(TS3EventType.TEXT_CHANNEL,
+					BungeeSpeak.getQueryInfo().getChannelId());
 		}
 		if (Configuration.TS_ENABLE_PRIVATE_MESSAGES.getBoolean()) {
-			BungeeSpeak.getQuery().addEventNotify(JTS3ServerQuery.EVENT_MODE_TEXTPRIVATE, 0);
+			BungeeSpeak.getQuery().getApi().registerEvent(TS3EventType.TEXT_PRIVATE);
 		}
 	}
 
@@ -65,21 +65,22 @@ public abstract class SetProperty {
 
 	protected void sendChannelChangeMessage(CommandSender sender) {
 		String mcMsg = Messages.MC_COMMAND_CHANNEL_CHANGE.get();
-		int clientId = BungeeSpeak.getQuery().getCurrentQueryClientChannelID();
-		HashMap<String, String> info = BungeeSpeak.getQuery().getInfo(JTS3ServerQuery.INFOMODE_CHANNELINFO, clientId);
+		int clientId = BungeeSpeak.getQueryInfo().getChannelId();
+		Map<String, String> info = BungeeSpeak.getQuery().getApi().getChannelInfo(clientId).getMap();
 
 		mcMsg = new Replacer().addSender(sender).addChannel(info).replace(mcMsg);
 		broadcastMessage(mcMsg, sender);
 	}
 
 	protected void connectChannel(CommandSender sender) {
-		int cid = BungeeSpeak.getQuery().getCurrentQueryClientChannelID();
-		int clid = BungeeSpeak.getQuery().getCurrentQueryClientID();
+		int cid = BungeeSpeak.getQueryInfo().getChannelId();
 		String pw = Configuration.TS_CHANNEL_PASSWORD.getString();
-		if (!BungeeSpeak.getQuery().moveClient(clid, cid, pw)) {
+		try {
+			BungeeSpeak.getQuery().getApi().moveQuery(cid, pw);
+		} catch (TS3CommandFailedException ex) {
 			send(sender, Level.WARNING, "&4The channel ID could not be set.");
 			send(sender, Level.WARNING, "&4Ensure that the ChannelID is really assigned to a valid channel.");
-			send(sender, Level.WARNING, "&4" + BungeeSpeak.getQuery().getLastError());
+			send(sender, Level.WARNING, "&4" + ex.getError().getId() + ": " + ex.getError().getMessage() + " - "  + ex.getError().getExtraMessage());
 			return;
 		}
 		sendChannelChangeMessage(sender);

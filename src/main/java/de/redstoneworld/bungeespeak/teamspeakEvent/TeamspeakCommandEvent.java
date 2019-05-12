@@ -1,7 +1,7 @@
 package de.redstoneworld.bungeespeak.teamspeakEvent;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
@@ -12,9 +12,9 @@ import de.redstoneworld.bungeespeak.TeamspeakCommands.TeamspeakCommandSender;
 
 public class TeamspeakCommandEvent extends TeamspeakEvent {
 
-	private HashMap<String, String> info;
+	private Map<String, String> info;
 
-	public TeamspeakCommandEvent(HashMap<String, String> infoMap) {
+	public TeamspeakCommandEvent(Map<String, String> infoMap) {
 		setUser(Integer.parseInt(infoMap.get("invokerid")));
 		info = infoMap;
 

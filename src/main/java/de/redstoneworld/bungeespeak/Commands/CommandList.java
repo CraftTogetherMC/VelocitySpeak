@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
+import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 import net.md_5.bungee.api.CommandSender;
 
 import de.redstoneworld.bungeespeak.BungeeSpeak;
@@ -32,17 +33,17 @@ public class CommandList extends BungeeSpeakCommand {
 		if (!isConnected(sender)) return;
 
 		if (args.length < 2 || args[1].equalsIgnoreCase("server")) {
-			Collection<HashMap<String, String>> clientCollection;
+			Collection<Client> clientCollection;
 			if (Configuration.MC_COMMANDS_CLIENTLIST_FILTER_LIST.getBoolean()) {
                 clientCollection = BungeeSpeak.getClientList().getFilteredClients().values();
             } else {
                 clientCollection = BungeeSpeak.getClientList().getClients().values();
             }
-			List<HashMap<String, String>> clients = new ArrayList<HashMap<String, String>>(clientCollection);
-			Iterator<HashMap<String, String>> iterator = clients.iterator();
+			List<Client> clients = new ArrayList<>(clientCollection);
+			Iterator<Client> iterator = clients.iterator();
 			while (iterator.hasNext()) {
-				HashMap<String, String> user = iterator.next();
-				if (!user.get("client_type").equals("0")) {
+				Client user = iterator.next();
+				if (user.getType() != 0) {
 					iterator.remove();
 				}
 			}
@@ -57,22 +58,16 @@ public class CommandList extends BungeeSpeakCommand {
 			send(sender, Level.INFO, mcMsg);
 		} else if (args.length == 2 && Configuration.TS_ENABLE_CHANNEL_EVENTS.getBoolean()
 				&& args[1].equalsIgnoreCase("channel")) {
-			String id = String.valueOf(BungeeSpeak.getQuery().getCurrentQueryClientChannelID());
+			int id = BungeeSpeak.getQueryInfo().getChannelId();
 
-            Collection<HashMap<String, String>> clientCollection;
-            if (Configuration.MC_COMMANDS_CLIENTLIST_FILTER_LIST.getBoolean()) {
-                clientCollection = BungeeSpeak.getClientList().getFilteredClients().values();
-            } else {
-                clientCollection = BungeeSpeak.getClientList().getClients().values();
-            }
-			List<HashMap<String, String>> clients = new ArrayList<HashMap<String, String>>(clientCollection);
-			Iterator<HashMap<String, String>> iterator = clients.iterator();
-			while (iterator.hasNext()) {
-				HashMap<String, String> user = iterator.next();
-				if (!user.get("client_type").equals("0") || !user.get("cid").equals(id)) {
-					iterator.remove();
-				}
+			Collection<Client> clientCollection;
+			if (Configuration.MC_COMMANDS_CLIENTLIST_FILTER_LIST.getBoolean()) {
+				clientCollection = BungeeSpeak.getClientList().getFilteredClients().values();
+			} else {
+				clientCollection = BungeeSpeak.getClientList().getClients().values();
 			}
+			List<Client> clients = new ArrayList<>(clientCollection);
+			clients.removeIf(user -> user.getType() != 0 || user.getChannelId() != id);
 
 			String mcMsg = Messages.MC_COMMAND_LIST_CHANNEL.get();
 			String mainColor = MessageUtil.getFormatString(mcMsg);
@@ -89,27 +84,27 @@ public class CommandList extends BungeeSpeakCommand {
 		}
 	}
 
-	private static String createClientList(Collection<HashMap<String, String>> map, boolean grouping, String mainColor, String secondaryColor) {
-		if (map.isEmpty()) return "-";
+	private static String createClientList(List<Client> clients, boolean grouping, String mainColor, String secondaryColor) {
+		if (clients.isEmpty()) return "-";
 
 		if (grouping) {
 			PermissionsHelper permHelper = BungeeSpeak.getPermissionsHelper();
-			Map<String, List<HashMap<String, String>>> groups = new HashMap<String, List<HashMap<String, String>>>();
+			Map<String, List<Client>> groups = new HashMap<>();
 
 			// Group
-			for (HashMap<String, String> user : map) {
-				ServerGroup sg = permHelper.getServerGroup(user.get("client_servergroups"));
+			for (Client user : clients) {
+				ServerGroup sg = permHelper.getServerGroup(user.getServerGroups());
 				if (sg == null) {
 					BungeeSpeak.log().warning("Could not resolve server group(s) for user \""
 							+ user.get("client_nickname") + "\".");
-					BungeeSpeak.log().warning("Server groups: " + String.valueOf(user.get("client_servergroups")));
+					BungeeSpeak.log().warning("Server groups: " + user.get("client_servergroups"));
 					continue;
 				}
 
 				if (groups.containsKey(sg.getName())) {
 					groups.get(sg.getName()).add(user);
 				} else {
-					List<HashMap<String, String>> newGroup = new ArrayList<HashMap<String, String>>();
+					List<Client> newGroup = new ArrayList<>();
 					newGroup.add(user);
 					groups.put(sg.getName(), newGroup);
 				}
@@ -118,10 +113,10 @@ public class CommandList extends BungeeSpeakCommand {
 
 			// Stringify
 			StringBuilder output = new StringBuilder("\n");
-			for (Entry<String, List<HashMap<String, String>>> entry : groups.entrySet()) {
+			for (Entry<String, List<Client>> entry : groups.entrySet()) {
 				output.append("&r").append(secondaryColor).append(entry.getKey()).append(": ");
-				for (HashMap<String, String> user : entry.getValue()) {
-					output.append(mainColor).append(user.get("client_nickname"));
+				for (Client user : entry.getValue()) {
+					output.append(mainColor).append(user.getNickname());
 					output.append("&r").append(secondaryColor).append(", ");
 				}
 				output.setLength(output.length() - 6);
@@ -131,9 +126,9 @@ public class CommandList extends BungeeSpeakCommand {
 			return output.toString();
 		} else {
 			StringBuilder list = new StringBuilder();
-			for (HashMap<String, String> user : BungeeSpeak.getClientList().getClients().values()) {
-				if (user.get("client_type").equals("0")) {
-					list.append(mainColor).append(user.get("client_nickname"));
+			for (Client user : BungeeSpeak.getClientList().getClients().values()) {
+				if (user.getType() == 0) {
+					list.append(mainColor).append(user.getNickname());
 					list.append("&r").append(secondaryColor).append(", ");
 				}
 			}

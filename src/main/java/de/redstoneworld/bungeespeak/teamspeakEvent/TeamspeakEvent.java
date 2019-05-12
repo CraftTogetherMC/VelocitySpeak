@@ -1,6 +1,6 @@
 package de.redstoneworld.bungeespeak.teamspeakEvent;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
@@ -11,9 +11,9 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public abstract class TeamspeakEvent {
 
-	private HashMap<String, String> user;
+	private Map<String, String> user;
 
-	public HashMap<String, String> getUser() {
+	public Map<String, String> getUser() {
 		return user;
 	}
 
@@ -30,7 +30,7 @@ public abstract class TeamspeakEvent {
 	}
 
 	protected void setUser(Integer clid) {
-		user = BungeeSpeak.getClientList().get(clid);
+		user = BungeeSpeak.getClientList().get(clid).getMap();
 	}
 
 	protected void sendMessage(Messages message, String permission) {

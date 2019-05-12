@@ -1,15 +1,15 @@
 package de.redstoneworld.bungeespeak.teamspeakEvent;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Messages;
 
 public class LeaveEvent extends TeamspeakEvent {
 
-	private HashMap<String, String> info;
+	private Map<String, String> info;
 
-	public LeaveEvent(HashMap<String, String> infoMap) {
+	public LeaveEvent(Map<String, String> infoMap) {
 		int clid = Integer.parseInt(infoMap.get("clid"));
 
 		setUser(clid);

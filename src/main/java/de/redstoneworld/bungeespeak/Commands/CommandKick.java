@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.AsyncQueryUtils.QueryKick;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
@@ -30,7 +31,7 @@ public class CommandKick extends BungeeSpeakCommand {
 
 		if (!isConnected(sender)) return;
 
-		HashMap<String, String> client = getClient(args[1], sender);
+		Client client = getClient(args[1], sender);
 		if (client == null) return;
 
 		String tsMsg = Messages.MC_COMMAND_KICK_TS.get();
@@ -40,14 +41,14 @@ public class CommandKick extends BungeeSpeakCommand {
 			msg = combineSplit(2, args, " ");
 		}
 
-		Replacer r = new Replacer().addSender(sender).addTargetClient(client).addMessage(msg);
+		Replacer r = new Replacer().addSender(sender).addTargetClient(client.getMap()).addMessage(msg);
 		tsMsg = MessageUtil.toTeamspeak(r.replace(tsMsg), false, Configuration.TS_ALLOW_LINKS.getBoolean());
 		mcMsg = r.replace(mcMsg);
 
 		if (tsMsg == null || tsMsg.isEmpty()) return;
 		if (tsMsg.length() > TS_MAXLENGHT) {
 			String tooLong = Messages.MC_COMMAND_ERROR_MESSAGE_TOO_LONG.get();
-			tooLong = new Replacer().addSender(sender).addTargetClient(client).replace(tooLong);
+			tooLong = new Replacer().addSender(sender).addTargetClient(client.getMap()).replace(tooLong);
 			send(sender, Level.WARNING, tooLong);
 			return;
 		}
@@ -62,8 +63,8 @@ public class CommandKick extends BungeeSpeakCommand {
 	public List<String> onTabComplete(CommandSender sender, String[] args) {
 		if (args.length != 2) return null;
 		List<String> al = new ArrayList<String>();
-		for (HashMap<String, String> client : BungeeSpeak.getClientList().getClients().values()) {
-			String n = client.get("client_nickname").replaceAll(" ", "");
+		for (Client client : BungeeSpeak.getClientList().getClients().values()) {
+			String n = client.getNickname().replaceAll(" ", "");
 			if (n.toLowerCase().startsWith(args[1].toLowerCase())) {
 				al.add(n);
 			}

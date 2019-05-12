@@ -1,7 +1,8 @@
 package de.redstoneworld.bungeespeak.teamspeakEvent;
 
-import java.util.HashMap;
+import java.util.Map;
 
+import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.Configuration.Configuration;
 import de.redstoneworld.bungeespeak.Configuration.Messages;
@@ -9,15 +10,14 @@ import de.redstoneworld.bungeespeak.util.Replacer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-import de.stefan1200.jts3serverquery.JTS3ServerQuery;
 import de.redstoneworld.bungeespeak.AsyncQueryUtils.QuerySender;
 import de.redstoneworld.bungeespeak.util.MessageUtil;
 
 public class ServerMessageEvent extends TeamspeakEvent {
 
-	private HashMap<String, String> info;
+	private Map<String, String> info;
 
-	public ServerMessageEvent(HashMap<String, String> infoMap) {
+	public ServerMessageEvent(Map<String, String> infoMap) {
 		setUser(Integer.parseInt(infoMap.get("invokerid")));
 		info = infoMap;
 
@@ -65,7 +65,7 @@ public class ServerMessageEvent extends TeamspeakEvent {
 				tsMsg = MessageUtil.toTeamspeak(r.replace(tsMsg), true, true);
 
 				if (tsMsg == null || tsMsg.isEmpty()) return;
-				QuerySender qs = new QuerySender(getClientId(), JTS3ServerQuery.TEXTMESSAGE_TARGET_CLIENT, tsMsg);
+				QuerySender qs = new QuerySender(getClientId(), TextMessageTargetMode.CLIENT, tsMsg);
 				BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qs);
 				return;
 			}
@@ -80,7 +80,7 @@ public class ServerMessageEvent extends TeamspeakEvent {
 					tsMsg = MessageUtil.toTeamspeak(r.replace(tsMsg), true, true);
 
 					if (tsMsg == null || tsMsg.isEmpty()) return;
-					QuerySender qs = new QuerySender(getClientId(), JTS3ServerQuery.TEXTMESSAGE_TARGET_CLIENT, tsMsg);
+					QuerySender qs = new QuerySender(getClientId(), TextMessageTargetMode.CLIENT, tsMsg);
 					BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qs);
 					return;
 				} else if (BungeeSpeak.getMuted(pl) || !checkPermissions(pl, "pm")) {
@@ -89,7 +89,7 @@ public class ServerMessageEvent extends TeamspeakEvent {
 					tsMsg = MessageUtil.toTeamspeak(r.replace(tsMsg), true, true);
 
 					if (tsMsg == null || tsMsg.isEmpty()) return;
-					QuerySender qs = new QuerySender(getClientId(), JTS3ServerQuery.TEXTMESSAGE_TARGET_CLIENT, tsMsg);
+					QuerySender qs = new QuerySender(getClientId(), TextMessageTargetMode.CLIENT, tsMsg);
 					BungeeSpeak.getInstance().getProxy().getScheduler().runAsync(BungeeSpeak.getInstance(), qs);
 					return;
 				}

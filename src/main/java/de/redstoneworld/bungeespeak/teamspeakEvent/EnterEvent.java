@@ -1,6 +1,6 @@
 package de.redstoneworld.bungeespeak.teamspeakEvent;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import de.redstoneworld.bungeespeak.BungeeSpeak;
 import de.redstoneworld.bungeespeak.ClientList;
@@ -8,7 +8,7 @@ import de.redstoneworld.bungeespeak.Configuration.Messages;
 
 public class EnterEvent extends TeamspeakEvent {
 
-	public EnterEvent(HashMap<String, String> infoMap) {
+	public EnterEvent(Map<String, String> infoMap) {
 		int clid = Integer.valueOf(infoMap.get("clid"));
 		ClientList clientList = BungeeSpeak.getClientList();
 
