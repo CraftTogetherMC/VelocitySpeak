@@ -74,7 +74,7 @@ public class MessagesTest {
 	private List<String> getAllKeys(net.md_5.bungee.config.Configuration c) {
 		List<String> keys = new ArrayList<String>();
 		for (String s : c.getKeys()){
-			if (c.get(s) instanceof Map) {
+			if (c.get(s) instanceof Map || c.get(s) instanceof net.md_5.bungee.config.Configuration) {
 				for (String key : getAllKeys(c.getSection(s))) {
 					keys.add(s + "." + key);
 				}
