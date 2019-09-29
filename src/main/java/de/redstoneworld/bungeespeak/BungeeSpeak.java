@@ -73,8 +73,6 @@ public class BungeeSpeak extends Plugin {
 		}
 
 		ts = new TeamspeakListener();
-		qc = new QueryConnector();
-		getProxy().getScheduler().runAsync(this, qc);
 		tsKeepAlive = new TeamspeakKeepAlive(this);
 		getProxy().getScheduler().schedule(this, tsKeepAlive, KEEP_ALIVE_DELAY / 2, KEEP_ALIVE_DELAY, TimeUnit.SECONDS);
 
