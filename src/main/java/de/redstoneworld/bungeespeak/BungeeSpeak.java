@@ -48,7 +48,7 @@ public class BungeeSpeak extends Plugin {
 	private TsCommandExecutor mcTsCommand;
 	private TsaCommandExecutor mcTsaCommand;
 	private PlayerListener playerListener;
-	private ChatListener chatListener;
+	private ChatListener chatListener = new ChatListener(ChatListener.Priority.NORMAL);
 	private Logger logger;
 
 	private Date started, stopped, laststarted, laststopped;
