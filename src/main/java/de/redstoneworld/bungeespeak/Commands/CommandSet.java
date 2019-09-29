@@ -1,6 +1,7 @@
 package de.redstoneworld.bungeespeak.Commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -107,12 +108,12 @@ public class CommandSet extends BungeeSpeakCommand {
 			SetProperty prop = getMatchingProperty(args[1]);
 
 			if (prop == null) {
-				return null;
+				return Collections.emptyList();
 			} else {
 				return prop.onTabComplete(sender, args);
 			}
 		default:
-			return null;
+			return Collections.emptyList();
 		}
 	}
 }

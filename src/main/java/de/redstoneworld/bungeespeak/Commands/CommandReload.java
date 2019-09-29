@@ -1,5 +1,6 @@
 package de.redstoneworld.bungeespeak.Commands;
 
+import java.util.Collections;
 import java.util.List;
 
 import de.redstoneworld.bungeespeak.BungeeSpeak;
@@ -30,6 +31,6 @@ public class CommandReload extends BungeeSpeakCommand {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		return null;
+		return Collections.emptyList();
 	}
 }

@@ -2,6 +2,7 @@ package de.redstoneworld.bungeespeak;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.List;
 
@@ -99,7 +100,7 @@ public class TsCommandExecutor extends Command implements TabExecutor {
 
 		switch (args.length) {
 			case 0:
-				return null;
+				return Collections.emptyList();
 			case 1:
 				List<String> al = new ArrayList<String>();
 				for (BungeeSpeakCommand uc : userCommands) {
@@ -112,12 +113,12 @@ public class TsCommandExecutor extends Command implements TabExecutor {
 				for (BungeeSpeakCommand bsc : userCommands) {
 					for (String name : bsc.getNames()) {
 						if (name.equalsIgnoreCase(args[0])) {
-							if (!checkPermissions(sender, bsc.getName())) return null;
+							if (!checkPermissions(sender, bsc.getName())) return Collections.emptyList();
 							return bsc.onTabComplete(sender, args);
 						}
 					}
 				}
-				return null;
+				return Collections.emptyList();
 		}
 	}
 }

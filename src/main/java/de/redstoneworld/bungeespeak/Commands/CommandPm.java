@@ -1,9 +1,6 @@
 package de.redstoneworld.bungeespeak.Commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
@@ -77,7 +74,7 @@ public class CommandPm extends BungeeSpeakCommand {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		if (args.length != 2) return null;
+		if (args.length != 2) return Collections.emptyList();
 		List<String> al = new ArrayList<String>();
 		for (Client client : BungeeSpeak.getClientList().getClients().values()) {
 			String n = client.getNickname().replaceAll(" ", "");

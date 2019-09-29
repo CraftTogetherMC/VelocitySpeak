@@ -1,6 +1,7 @@
 package de.redstoneworld.bungeespeak.Commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -68,7 +69,7 @@ public class CommandChannelKick extends BungeeSpeakCommand {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		if (args.length != 2) return null;
+		if (args.length != 2) return Collections.emptyList();
 		List<String> al = new ArrayList<String>();
 		for (Client client : BungeeSpeak.getClientList().getClients().values()) {
 			String n = client.getNickname().replaceAll(" ", "");

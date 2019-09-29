@@ -1,6 +1,7 @@
 package de.redstoneworld.bungeespeak.Commands;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -58,6 +59,6 @@ public class CommandBroadcast extends BungeeSpeakCommand {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		return null;
+		return Collections.emptyList();
 	}
 }
