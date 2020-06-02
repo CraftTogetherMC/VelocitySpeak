@@ -7,7 +7,6 @@ import de.redstoneworld.bungeespeak.TeamspeakCommands.TeamspeakCommandSender;
 import de.redstoneworld.bungeespeak.util.Replacer;
 
 import de.redstoneworld.bungeespeak.util.MessageUtil;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class CommandPm extends TeamspeakCommand {
@@ -19,8 +18,8 @@ public class CommandPm extends TeamspeakCommand {
 	@Override
 	public void execute(TeamspeakCommandSender sender, String[] args) {
 		if (args.length < 1) {
-			sender.sendMessage(ChatColor.RED + "Too few arguments!");
-			sender.sendMessage(ChatColor.RED + "Usage: !pm user (message)");
+			sender.sendMessage(Messages.TS_COMMAND_TOO_FEW_ARGUMENTS.get());
+			sender.sendMessage(Messages.TS_COMMAND_PM_USAGE.get());
 			return;
 		}
 		String mcUser = args[0];

@@ -133,8 +133,10 @@ MinecraftCommand:
       ToMinecraftUser: '&aUsage: &e%usage%'
 TeamspeakCommand:
   List:
+    Usage: '&cUsage: !list'
     ToTeamspeakUser: 'Currently online (%count%): %list%'
   Pm:
+    Usage: '&cUsage: !pm user (message)'
     ToTeamspeakUser: '&4Me &r-> &4%player_displayname%&r: %msg%'
     ConversationStarted:
       ToTeamspeakUser: 'Started conversation with player %player_displayname%. You can now chat directly without typing !pm'
@@ -145,6 +147,7 @@ TeamspeakCommand:
         ToTeamspeakUser: '&4The user &l%player_displayname%&r&4 can''t receive your message.'
   CommandSenderName: '&a[&6TS&a] &e%client_nickname%&r'
   Errors:
+    TooFewArguments: '&cToo few arguments!'
     PluginNotWhitelisted:
       ToTeamspeakUser: You are not allowed to run commands of that plugin.
     CommandBlacklisted:

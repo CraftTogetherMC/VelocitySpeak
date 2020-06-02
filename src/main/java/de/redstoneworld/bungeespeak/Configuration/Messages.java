@@ -248,8 +248,14 @@ public enum Messages {
 	TS_COMMAND_LIST("TeamspeakCommand.List.ToTeamspeakUser",
 			"Currently online (%count%): %list%"),
 
+	TS_COMMAND_LIST_USAGE("TeamspeakCommand.List.Usage",
+			"&cUsage: !list"),
+
 	TS_COMMAND_PM("TeamspeakCommand.Pm.ToTeamspeakUser",
 			"&4Me &r-> &4%player_displayname%&r: %msg%"),
+
+	TS_COMMAND_PM_USAGE("TeamspeakCommand.Pm.Usage",
+			"&cUsage: !pm user (message)"),
 
 	TS_COMMAND_PM_CONVERSATION_STARTED("TeamspeakCommand.Pm.ConversationStarted.ToTeamspeakUser",
 			"Started conversation with player %player_displayname%. You can now chat directly without typing !pm"),
@@ -261,6 +267,9 @@ public enum Messages {
 			"&4The user &l%player_displayname%&r&4 can't receive your message."),
 
 	TS_COMMAND_SENDER_NAME("TeamspeakCommand.CommandSenderName", "&a[&6TS&a] &e%client_nickname%&r"),
+
+	TS_COMMAND_TOO_FEW_ARGUMENTS("TeamspeakCommand.Errors.TooFewArguments",
+			"&cToo few arguments!"),
 
 	TS_COMMAND_NOT_WHITELISTED("TeamspeakCommand.Errors.PluginNotWhitelisted.ToTeamspeakUser",
 			"You are not allowed to run commands of that plugin."),
