@@ -121,7 +121,7 @@ public class CommandList extends BungeeSpeakCommand {
 			return output.toString();
 		} else {
 			StringBuilder list = new StringBuilder();
-			for (Client user : BungeeSpeak.getClientList().getClients().values()) {
+			for (Client user : clients) {
 				if (user.getType() == 0) {
 					list.append(mainColor).append(user.getNickname());
 					list.append("&r").append(secondaryColor).append(", ");
