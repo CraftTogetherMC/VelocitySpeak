@@ -62,7 +62,7 @@ public enum Configuration {
 
 	public static void reload() throws IOException {
 		VelocitySpeak.log().info("Loading config!");
-		config = new YamlConfig(VelocitySpeak.getInstance(), VelocitySpeak.getInstance().getDataFolder() + File.separator + "config.yml");
+		config = new YamlConfig(VelocitySpeak.getInstance().getDataDirectory() + File.separator + "config.yml");
 	}
 
 

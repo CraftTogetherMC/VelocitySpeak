@@ -273,7 +273,7 @@ public final class PermissionsHelper implements Runnable {
 
 	public void reload() throws IOException {
 		VelocitySpeak.log().info("Loading permissions!");
-		permissionsConfig = new YamlConfig(VelocitySpeak.getInstance(), VelocitySpeak.getInstance().getDataDirectory() + File.separator + "permissions.yml");
+		permissionsConfig = new YamlConfig(VelocitySpeak.getInstance().getDataDirectory() + File.separator + "permissions.yml");
 	}
 
 	public void save() {

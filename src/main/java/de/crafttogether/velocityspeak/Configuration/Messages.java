@@ -289,14 +289,14 @@ public enum Messages {
 
 	public static void reload() throws IOException {
 		VelocitySpeak.log().info("Loading locale!");
-		config = new YamlConfig(VelocitySpeak.getInstance(), VelocitySpeak.getInstance().getDataFolder() + File.separator + "locale.yml");
+		config = new YamlConfig(VelocitySpeak.getInstance().getDataDirectory() + File.separator + "locale.yml");
 	}
 
 
 	public static void save() {
 		if (config == null) {
 			try {
-				config = new YamlConfig(VelocitySpeak.getInstance(), VelocitySpeak.getInstance().getDataFolder() + File.separator + "locale.yml");
+				config = new YamlConfig(VelocitySpeak.getInstance().getDataDirectory() + File.separator + "locale.yml");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.permission.Tristate;
 import de.crafttogether.velocityspeak.AsyncQueryUtils.QuerySender;
 import de.crafttogether.velocityspeak.Configuration.Configuration;
 import de.crafttogether.velocityspeak.Configuration.Messages;
@@ -42,6 +43,11 @@ public class TeamspeakCommandSender implements CommandSource {
 	@Override
 	public boolean hasPermission(String perm) {
 		return permissions.containsKey(perm) && permissions.get(perm);
+	}
+
+	@Override
+	public Tristate getPermissionValue(String s) {
+		return null;
 	}
 
 	@Override

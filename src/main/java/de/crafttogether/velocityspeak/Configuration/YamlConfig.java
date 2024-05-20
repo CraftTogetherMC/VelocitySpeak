@@ -1,5 +1,11 @@
 package de.crafttogether.velocityspeak.Configuration;
 
+import com.velocitypowered.api.plugin.Plugin;
+import de.crafttogether.velocityspeak.VelocitySpeak;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,19 +21,16 @@ public class YamlConfig {
 
     protected File configFile;
 
-    private Plugin plugin;
+    private final VelocitySpeak plugin = VelocitySpeak.getInstance();
     
     /**
      * Read configuration into memory
-     * @param plugin The plugin this yaml config is for
      * @param configFilePath The path where the config's file should be saved in
      * @throws IOException When it could not create or load the file
      */
-    public YamlConfig(Plugin plugin, String configFilePath) throws IOException {
-        this.plugin = plugin;
-        
+    public YamlConfig(String configFilePath) throws IOException {
         configFile = new File(configFilePath);
-        InputStream defaultStream = plugin.getResourceAsStream(configFile.getName());
+        InputStream defaultStream = plugin.getClass().getResourceAsStream("/" + configFile.getName()); // TODO: Check if work?
         if (defaultStream != null) {
             defaultCfg = ymlCfg.load(new InputStreamReader(defaultStream));
         }

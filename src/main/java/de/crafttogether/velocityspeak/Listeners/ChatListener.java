@@ -1,6 +1,10 @@
 package de.crafttogether.velocityspeak.Listeners;
 
 import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
+import com.velocitypowered.api.event.PostOrder;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.player.PlayerChatEvent;
+import com.velocitypowered.api.proxy.Player;
 import de.crafttogether.velocityspeak.Configuration.Configuration;
 import de.crafttogether.velocityspeak.Configuration.Messages;
 import de.crafttogether.velocityspeak.VelocitySpeak;
@@ -9,13 +13,7 @@ import de.crafttogether.velocityspeak.util.Replacer;
 import de.crafttogether.velocityspeak.AsyncQueryUtils.QuerySender;
 import de.crafttogether.velocityspeak.util.MessageUtil;
 
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.ChatEvent;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.event.EventHandler;
-import net.md_5.bungee.event.EventPriority;
-
-public class ChatListener implements Listener {
+public class ChatListener {
 
 	private Priority priority;
 
@@ -23,36 +21,36 @@ public class ChatListener implements Listener {
 		setPriority(priority);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onChatHighest(ChatEvent e) {
+	@Subscribe(order = PostOrder.LAST)
+	public void onChatHighest(PlayerChatEvent e) {
 		handle(e, Priority.HIGHEST);
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
-	public void onChatHigh(ChatEvent e) {
+	@Subscribe(order = PostOrder.LATE)
+	public void onChatHigh(PlayerChatEvent e) {
 		handle(e, Priority.HIGH);
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onChatNormal(ChatEvent e) {
+	@Subscribe(order = PostOrder.NORMAL)
+	public void onChatNormal(PlayerChatEvent e) {
 		handle(e, Priority.NORMAL);
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
-	public void onChatLow(ChatEvent e) {
+	@Subscribe(order = PostOrder.EARLY)
+	public void onChatLow(PlayerChatEvent e) {
 		handle(e, Priority.LOW);
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onChatLowest(ChatEvent e) {
+	@Subscribe(order = PostOrder.FIRST)
+	public void onChatLowest(PlayerChatEvent e) {
 		handle(e, Priority.LOWEST);
 	}
 
-	public void handle(ChatEvent e, Priority priority) {
+	public void handle(PlayerChatEvent e, Priority priority) {
 		if (priority != this.priority) return;
 		if (!VelocitySpeak.getInstance().isEnabled()) return;
 		if (Configuration.TS_MESSAGES_TARGET.getTeamspeakTarget() == TsTarget.NONE) return;
-		if (e.getSender() == null || !(e.getSender() instanceof ProxiedPlayer) || e.getMessage().isEmpty()) return;
+		if (e.getMessage().isEmpty()) return;
 		if (e.getMessage().startsWith("/")) return;
 
 		/* If all players on the server will receive this message, it should be considered safe to relay */
@@ -63,10 +61,10 @@ public class ChatListener implements Listener {
 			}
 		}*/
 
-		if (!hasPermission((ProxiedPlayer) e.getSender(), "chat")) return;
+		if (!hasPermission(e.getPlayer(), "chat")) return;
 
 		String tsMsg = Messages.MC_EVENT_CHAT.get();
-		tsMsg = new Replacer().addPlayer((ProxiedPlayer) e.getSender()).addMessage(e.getMessage()).replace(tsMsg);
+		tsMsg = new Replacer().addPlayer(e.getPlayer()).addMessage(e.getMessage()).replace(tsMsg);
 		tsMsg = MessageUtil.toTeamspeak(tsMsg, true, Configuration.TS_ALLOW_LINKS.getBoolean());
 
 		if (tsMsg.isEmpty()) return;
@@ -74,15 +72,15 @@ public class ChatListener implements Listener {
 		if (Configuration.TS_MESSAGES_TARGET.getTeamspeakTarget() == TsTarget.CHANNEL) {
 			QuerySender qs = new QuerySender(VelocitySpeak.getQueryInfo().getChannelId(),
 					TextMessageTargetMode.CHANNEL, tsMsg);
-			VelocitySpeak.getInstance().getProxy().getScheduler().runAsync(VelocitySpeak.getInstance(), qs);
+			VelocitySpeak.getInstance().getProxy().getScheduler().buildTask(VelocitySpeak.getInstance(), qs).schedule();
 		} else if (Configuration.TS_MESSAGES_TARGET.getTeamspeakTarget() == TsTarget.SERVER) {
 			QuerySender qs = new QuerySender(VelocitySpeak.getQueryInfo().getVirtualServerId(),
 					TextMessageTargetMode.SERVER, tsMsg);
-			VelocitySpeak.getInstance().getProxy().getScheduler().runAsync(VelocitySpeak.getInstance(), qs);
+			VelocitySpeak.getInstance().getProxy().getScheduler().buildTask(VelocitySpeak.getInstance(), qs).schedule();
 		}
 	}
 
-	private boolean hasPermission(ProxiedPlayer player, String perm) {
+	private boolean hasPermission(Player player, String perm) {
 		return player.hasPermission("bungeespeak.sendteamspeak." + perm);
 	}
 
@@ -91,20 +89,20 @@ public class ChatListener implements Listener {
 	}
 
 	public enum Priority {
-		LOWEST(EventPriority.LOWEST),
-		LOW(EventPriority.LOW),
-		NORMAL(EventPriority.NORMAL),
-		HIGH(EventPriority.HIGH),
-		HIGHEST(EventPriority.HIGHEST);
+		LOWEST(PostOrder.FIRST),
+		LOW(PostOrder.EARLY),
+		NORMAL(PostOrder.NORMAL),
+		HIGH(PostOrder.LATE),
+		HIGHEST(PostOrder.LAST);
 
-		public final byte eventPriority;
+		public final PostOrder eventPriority;
 
-		private Priority(final byte eventPriority) {
+		private Priority(final PostOrder eventPriority) {
 			this.eventPriority = eventPriority;
 		}
 
 		public int getEventPriority() {
-			return eventPriority;
+			return eventPriority.ordinal();
 		}
 	}
 }

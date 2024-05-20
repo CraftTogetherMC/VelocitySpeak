@@ -1,7 +1,5 @@
 package de.crafttogether.velocityspeak.util;
 
-import net.md_5.bungee.api.ChatColor;
-
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
