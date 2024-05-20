@@ -1,0 +1,110 @@
+package de.crafttogether.velocityspeak.Listeners;
+
+import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
+import de.crafttogether.velocityspeak.Configuration.Configuration;
+import de.crafttogether.velocityspeak.Configuration.Messages;
+import de.crafttogether.velocityspeak.VelocitySpeak;
+import de.crafttogether.velocityspeak.TsTarget;
+import de.crafttogether.velocityspeak.util.Replacer;
+import de.crafttogether.velocityspeak.AsyncQueryUtils.QuerySender;
+import de.crafttogether.velocityspeak.util.MessageUtil;
+
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.ChatEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
+
+public class ChatListener implements Listener {
+
+	private Priority priority;
+
+	public ChatListener(Priority priority) {
+		setPriority(priority);
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onChatHighest(ChatEvent e) {
+		handle(e, Priority.HIGHEST);
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onChatHigh(ChatEvent e) {
+		handle(e, Priority.HIGH);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onChatNormal(ChatEvent e) {
+		handle(e, Priority.NORMAL);
+	}
+
+	@EventHandler(priority = EventPriority.LOW)
+	public void onChatLow(ChatEvent e) {
+		handle(e, Priority.LOW);
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onChatLowest(ChatEvent e) {
+		handle(e, Priority.LOWEST);
+	}
+
+	public void handle(ChatEvent e, Priority priority) {
+		if (priority != this.priority) return;
+		if (!VelocitySpeak.getInstance().isEnabled()) return;
+		if (Configuration.TS_MESSAGES_TARGET.getTeamspeakTarget() == TsTarget.NONE) return;
+		if (e.getSender() == null || !(e.getSender() instanceof ProxiedPlayer) || e.getMessage().isEmpty()) return;
+		if (e.getMessage().startsWith("/")) return;
+
+		/* If all players on the server will receive this message, it should be considered safe to relay */
+		/* TODO: Find good implementation on Bungee, probably needs to depend on specific chat plugin?
+		if (Configuration.PLUGINS_CHAT_RECIPIENTS_MUST_BE_EVERYONE.getBoolean()) {
+			if (e.getRecipients().size() != Bukkit.getOnlinePlayers().size()) {
+				return;
+			}
+		}*/
+
+		if (!hasPermission((ProxiedPlayer) e.getSender(), "chat")) return;
+
+		String tsMsg = Messages.MC_EVENT_CHAT.get();
+		tsMsg = new Replacer().addPlayer((ProxiedPlayer) e.getSender()).addMessage(e.getMessage()).replace(tsMsg);
+		tsMsg = MessageUtil.toTeamspeak(tsMsg, true, Configuration.TS_ALLOW_LINKS.getBoolean());
+
+		if (tsMsg.isEmpty()) return;
+
+		if (Configuration.TS_MESSAGES_TARGET.getTeamspeakTarget() == TsTarget.CHANNEL) {
+			QuerySender qs = new QuerySender(VelocitySpeak.getQueryInfo().getChannelId(),
+					TextMessageTargetMode.CHANNEL, tsMsg);
+			VelocitySpeak.getInstance().getProxy().getScheduler().runAsync(VelocitySpeak.getInstance(), qs);
+		} else if (Configuration.TS_MESSAGES_TARGET.getTeamspeakTarget() == TsTarget.SERVER) {
+			QuerySender qs = new QuerySender(VelocitySpeak.getQueryInfo().getVirtualServerId(),
+					TextMessageTargetMode.SERVER, tsMsg);
+			VelocitySpeak.getInstance().getProxy().getScheduler().runAsync(VelocitySpeak.getInstance(), qs);
+		}
+	}
+
+	private boolean hasPermission(ProxiedPlayer player, String perm) {
+		return player.hasPermission("bungeespeak.sendteamspeak." + perm);
+	}
+
+	public void setPriority(Priority priority) {
+		this.priority = priority;
+	}
+
+	public enum Priority {
+		LOWEST(EventPriority.LOWEST),
+		LOW(EventPriority.LOW),
+		NORMAL(EventPriority.NORMAL),
+		HIGH(EventPriority.HIGH),
+		HIGHEST(EventPriority.HIGHEST);
+
+		public final byte eventPriority;
+
+		private Priority(final byte eventPriority) {
+			this.eventPriority = eventPriority;
+		}
+
+		public int getEventPriority() {
+			return eventPriority;
+		}
+	}
+}
