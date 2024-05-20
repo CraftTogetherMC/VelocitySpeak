@@ -1,7 +1,5 @@
 package de.crafttogether.velocityspeak.util;
 
-import net.md_5.bungee.api.ChatColor;
-
 public enum FormatString {
 
 	BLACK('0', "color", "#000000"),

@@ -3,7 +3,6 @@ package de.crafttogether.velocityspeak.TeamspeakCommands;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +18,8 @@ import de.crafttogether.velocityspeak.Configuration.Messages;
 import de.crafttogether.velocityspeak.VelocitySpeak;
 import de.crafttogether.velocityspeak.util.Replacer;
 import de.crafttogether.velocityspeak.util.MessageUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class TeamspeakCommandSender implements CommandSource {
 
@@ -46,21 +47,18 @@ public class TeamspeakCommandSender implements CommandSource {
 	}
 
 	@Override
-	public Tristate getPermissionValue(String s) {
-		return null;
+	public Tristate getPermissionValue(String perm) {
+		return Tristate.fromBoolean(permissions.containsKey(perm) && permissions.get(perm));
 	}
 
-	@Override
 	public void setPermission(String s, boolean b) {
 		permissions.put(s, b);
 	}
 
-	@Override
 	public Collection<String> getPermissions() {
 		return null;
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}
@@ -74,48 +72,31 @@ public class TeamspeakCommandSender implements CommandSource {
 	}
 
 	@Override
-	public void sendMessage(String message) {
-		if (message == null) return;
+	public void sendMessage(Component component) {
+		if (component.children().isEmpty()) return;
 		if (!VelocitySpeak.getQuery().isConnected()) return;
 
-		outBuffer.add(format(message));
+		outBuffer.add(format(LegacyComponentSerializer.legacyAmpersand().serialize(component)));
 		startBuffer();
 	}
 
-	@Override
-	public void sendMessages(String... strings) {
-		if (strings == null || strings.length == 0) return;
+	public void sendMessage(Component... components) {
+		if (components == null || components.length == 0) return;
 
-		for (String string : strings) {
-			outBuffer.add(format(string));
+		for (Component component : components) {
+			outBuffer.add(format(LegacyComponentSerializer.legacyAmpersand().serialize(component)));
 		}
 
 		startBuffer();
 	}
 
-	@Override
-	public void sendMessage(BaseComponent... baseComponents) {
-		sendMessage(TextComponent.toLegacyText(baseComponents));
+	public void sendMessage(String string)  {
+		sendMessage(Component.text(string));
 	}
 
-	@Override
-	public void sendMessage(BaseComponent baseComponent) {
-		sendMessage(TextComponent.toLegacyText(baseComponent));
-	}
-
-	@Override
-	public Collection<String> getGroups() {
-		return new HashSet<String>();
-	}
-
-	@Override
-	public void addGroups(String... strings) {
-
-	}
-
-	@Override
-	public void removeGroups(String... strings) {
-
+	public void sendMessage(String... strings)  {
+		for (String string : strings)
+			sendMessage(Component.text(string));
 	}
 
 	private String format(String s) {
