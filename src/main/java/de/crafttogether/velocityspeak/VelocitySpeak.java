@@ -25,6 +25,7 @@ import de.crafttogether.velocityspeak.Listeners.PlayerListener;
 import de.crafttogether.velocityspeak.TeamspeakCommands.PermissionsHelper;
 import de.crafttogether.velocityspeak.TeamspeakCommands.TeamspeakCommandExecutor;
 import de.crafttogether.velocityspeak.teamspeakEvent.TeamspeakListener;
+import de.crafttogether.velocityspeak.util.ChatColor;
 
 @Plugin(
 		id = "velocityspeak",
@@ -136,8 +137,7 @@ public class VelocitySpeak {
 
 	@Deprecated
 	public String toString() {
-		// TODO: Figure out
-		return Configuration.PREFIX.getString();
+		return ChatColor.translateAlternateColorCodes('&', Configuration.PREFIX.getString());
 	}
 
 

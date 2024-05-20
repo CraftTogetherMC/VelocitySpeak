@@ -19,6 +19,7 @@ import de.crafttogether.velocityspeak.Commands.BungeeSpeakCommand;
 import de.crafttogether.velocityspeak.Commands.CommandChannelKick;
 import de.crafttogether.velocityspeak.Commands.CommandReload;
 import de.crafttogether.velocityspeak.Commands.CommandStatus;
+import de.crafttogether.velocityspeak.util.ChatColor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
@@ -54,10 +55,9 @@ public class TsaCommandExecutor implements SimpleCommand {
 			return;
 		}
 		if (source instanceof Player || source instanceof TeamspeakCommandSender) {
-			source.sendMessage(Component.text(prefix ? VelocitySpeak.getFullName() : "")
-					.append(LegacyComponentSerializer.legacyAmpersand().deserialize("msg")));
+			source.sendMessage(Component.text((prefix ? VelocitySpeak.getFullName() : "") + ChatColor.translateAlternateColorCodes('&', msg)));
 		} else {
-			VelocitySpeak.getInstance().getLogger().log(level, msg); // TODO: Strip colorcodes
+			VelocitySpeak.getInstance().getLogger().log(level, ChatColor.translateAlternateColorCodes('&', msg));
 		}
 	}
 

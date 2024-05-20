@@ -1,7 +1,6 @@
 package de.crafttogether.velocityspeak.teamspeakEvent;
 
 import java.util.Map;
-import java.util.Optional;
 
 import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
 import com.velocitypowered.api.proxy.Player;
@@ -15,8 +14,6 @@ import de.crafttogether.velocityspeak.util.MessageUtil;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class ServerMessageEvent extends TeamspeakEvent {
-
-	// TODO: Not sure about the optionals
 
 	private Map<String, String> info;
 

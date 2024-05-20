@@ -10,6 +10,7 @@ import de.crafttogether.velocityspeak.VelocitySpeak;
 import de.crafttogether.velocityspeak.Configuration.Configuration;
 import de.crafttogether.velocityspeak.Configuration.Messages;
 import de.crafttogether.velocityspeak.TeamspeakCommands.TeamspeakCommandSender;
+import de.crafttogether.velocityspeak.util.ChatColor;
 import de.crafttogether.velocityspeak.util.MessageUtil;
 import de.crafttogether.velocityspeak.util.Replacer;
 import net.kyori.adventure.text.Component;
@@ -46,10 +47,9 @@ public abstract class BungeeSpeakCommand {
 		}
 
 		if (source instanceof Player || source instanceof TeamspeakCommandSender) {
-			source.sendMessage(Component.text(prefix ? VelocitySpeak.getFullName() : "")
-					.append(LegacyComponentSerializer.legacyAmpersand().deserialize("msg")));
+			source.sendMessage(Component.text((prefix ? VelocitySpeak.getFullName() : "") + ChatColor.translateAlternateColorCodes('&', msg)));
 		} else {
-			VelocitySpeak.getInstance().getLogger().log(level, msg); // TODO: Strip colorcodes
+			VelocitySpeak.getInstance().getLogger().log(level, ChatColor.translateAlternateColorCodes('&', msg));
 		}
 	}
 
